@@ -22,7 +22,7 @@ def getDataFromTable(table):
             sql = f'''SELECT * FROM {table}'''
             cursor.execute(sql)
             result = cursor.fetchall()
-            print(result)
+            return result
     except Error as e:
         print("Error while connecting to MySQL", e)
 

@@ -5,23 +5,8 @@ import mysql.connector as msql
 from mysql.connector import Error
 from config import dbDic
 import os
-"""
-Because the Python hashlib library cannot 
-hash unicode encoded strings, such as those in utf-8, 
-we need to first convert the string to bytes. 
-We can do this using the .encode() and .hexdigest() methods.
+import re
 
-#http://www.codinghorror.com/blog/archives/000953.html
-"""
-
-
-"""
-With regular cryptographic hash functions (e.g. MD5, SHA256), 
-an attacker can guess billions of passwords per second. 
-With PBKDF2, bcrypt, or scrypt, the attacker can only make a 
-few thousand guesses per second (or less, depending on 
-the configuration).
-"""
 def create_hash(password, salt):
     #https://levelup.gitconnected.com/python-salting-your-password-hashes-3eb8ccb707f9
     #Python String encode() converts a string value into a collection of bytes, using an encoding scheme specified by the user.
@@ -75,3 +60,17 @@ def get_userID(username):
         cursor.close()
         conn.close()
 
+
+def check_pass_cond(password):
+    pattern = re.compile(r'^(?=.*[a-z])(?=.*\d)(?=.*[A-Z])(?=.*[\W_])[a-zA-Z0-9\W_]{6,12}$')
+
+    if re.match(pattern, password):
+        return True
+    else:
+        return False
+    
+def username_already_exists(username):
+    user_id = get_userID(username)
+    if user_id is not None:
+        return True
+    return False

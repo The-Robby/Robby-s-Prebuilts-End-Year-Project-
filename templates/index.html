@@ -3,35 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple HTML Page</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Login</title>
 </head>
 <body>
-
-    <header>
-        <h1>
-            Welcome to Robby's Prebuilts
-        </h1>
-    </header>
-
-    <main>
-        <div class="container">
-            <form class="login-form" action="/login" method="post">
-                <h2>Login</h2>
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username" required>
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required>
-                <button type="submit">Login</button>
-            </form>
-            <div class="register-option">
-                <p>Don't have an account? <a href="register">Register here</a></p>
-            </div>
+    <div class="login-container">
+        <div class="login-form">
+            <h2 id="title">Welcome to the simple online banking system!</h2>
+            <a href="login">Login</a>
+            <a href="register">Register</a>
         </div>
-    </main>
-
-    <footer>
-        <p>&copy; 2024 Robbert Groffi</p>
-    </footer>
+    </div>
 </body>
 </html>
