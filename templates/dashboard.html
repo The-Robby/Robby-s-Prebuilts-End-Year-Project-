@@ -9,73 +9,76 @@
 <body>
 
     <div class="product-container">
-        <!-- Main Product -->
         <div class="product">
-            <h2>Main Product</h2>
+            <h2>Build your PC!</h2>
             <img src="{{ url_for('static', filename='images/gamingdesktop.png') }}" alt="Main Product" height="270">
-            <p>Description of Main Product goes here.</p>
+            <p>Choose every part by hand, <br>enjoy the build it yourself discount <br>and enjoy the ease of a prebuilt</p>
         </div>
         
-        <!-- Component selection dropdown for CPU -->
         <div class="component-selection">
             <h3>Select CPU:</h3>
             <select id="cpu-select">
-                <!-- Options will be dynamically populated here -->
+
             </select>
+            <h4>Info:</h4>
+            <p id="cpu-info">Select a GPU to see its info.</p>
         </div>
     
-        <!-- Component selection dropdown for GPU -->
         <div class="component-selection">
             <h3>Select GPU:</h3>
             <select id="gpu-select">
-                <!-- Options will be dynamically populated here -->
+
             </select>
+            <h4>Info:</h4>
+            <p id="gpu-info">Select a GPU to see its info.</p>
         </div>
     
-        <!-- Component selection dropdown for RAM -->
         <div class="component-selection">
             <h3>Select RAM:</h3>
             <select id="ram-select">
-                <!-- Options will be dynamically populated here -->
+
             </select>
+            <h4>Info:</h4>
+            <p id="info">Select a GPU to see its info.</p>
         </div>
 
-                <!-- Component selection dropdown for RAM -->
         <div class="component-selection">
             <h3>Select PSU:</h3>
-            <select id="ram-select">
-                <!-- Options will be dynamically populated here -->
+            <select id="psu-select">
+
             </select>
+            <h4>Info:</h4>
+            <p id="psu-info">Select a GPU to see its info.</p>
         </div>
 
-                <!-- Component selection dropdown for RAM -->
         <div class="component-selection">
             <h3>Select Storage:</h3>
-            <select id="ram-select">
-                <!-- Options will be dynamically populated here -->
+            <select id="storage-select">
+
             </select>
+            <h4>Info:</h4>
+            <p id="storage-info">Select a GPU to see its info.</p>
         </div>
 
-                <!-- Component selection dropdown for RAM -->
         <div class="component-selection">
             <h3>Select Motherboard:</h3>
-            <select id="ram-select">
-                <!-- Options will be dynamically populated here -->
+            <select id="mom-select">
+
             </select>
+            <h4>Info:</h4>
+            <p id="mom-info">Select a GPU to see its info.</p>
         </div>
 
-                <!-- Component selection dropdown for RAM -->
         <div class="component-selection">
             <h3>Select Case:</h3>
-            <select id="ram-select">
-                <!-- Options will be dynamically populated here -->
+            <select id="case-select">
+
             </select>
+            <h4>Info:</h4>
+            <p id="info">Select a GPU to see its info.</p>
         </div>
 
 
-        <!-- Repeat for other components (RAM, Storage, etc.) -->
-
-        <!-- Add to Cart Button -->
         <button>Add to Cart</button>
         <a href="logout">Log Out</a>
     </div>
@@ -92,23 +95,31 @@
                         const optionElem = document.createElement('option');
                         optionElem.value = option.id;
                         optionElem.textContent = option.name;
+                        optionElem.setAttribute('data-prijs', option.prijs);
                         select.appendChild(optionElem);
                     });
+                    // Update info element with the price of the first option
+
                 })
                 .catch(error => console.error(`Error fetching options for ${component}:`, error));
         }
+
+        document.getElementById('ram-select').addEventListener('change', function() {
+            var selectedOption = this.options[this.selectedIndex];
+            var prijs = selectedOption.getAttribute('data-prijs');
+            document.getElementById('info').innerText = prijs;
+        });
 
         // Fetch options for each component on page load
         fetchOptions('cpu', 'cpu-select');
         fetchOptions('gpu', 'gpu-select');
         fetchOptions('ram', 'ram-select');
+        fetchOptions('psu', 'psu-select');
+        fetchOptions('storage', 'storage-select');
+        fetchOptions('mom', 'mom-select');
+        fetchOptions('case', 'case-select');
 
-        // Event listeners for component selection change (if needed)
-        // You can add event listeners to update options when the selection changes
-        // Example:
-        // document.getElementById('cpu-select').addEventListener('change', function() {
-        //     fetchOptions('cpu', 'cpu-select');
-        // });
+
     </script>
 </body>
 </html>

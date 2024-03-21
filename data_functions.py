@@ -2,12 +2,12 @@ import mysql.connector as msql
 from mysql.connector import Error
 from config import dbDic
 
-def inserDataIntoTable(table, parameters, values):
+def inserDataIntoTable(table, columnnames, values):
     try:
         conn = msql.connect(**dbDic) 
         if conn.is_connected():
             cursor = conn.cursor()
-            query = f'''INSERT INTO {table}({parameters}) VALUES({values});'''
+            query = f'''INSERT INTO {table}({columnnames}) VALUES({values});'''
             cursor.execute(query)
             conn.commit()
             conn.close()
@@ -52,7 +52,73 @@ def update_prebuiltDB(table, set_updated_values, set_conditions):
     except Error as e:
         print("Error while connecting to MySQL", e)
 
+def get_foreign_key_name(table, fk):
+    try:
+        conn = msql.connect(**dbDic)
+        if conn.is_connected():
+            cursor = conn.cursor()
+            sql = f'''SELECT naam FROM {table} WHERE {table}id = {fk}'''
+            cursor.execute(sql)
+            result = cursor.fetchall()
+            return result[0][0]
+    except Error as e:
+        print("Error while connecting to MySQL", e)
 
+def getIdAndNamesFromTable(table):
+    result = getDataFromTable(table)
+    idnames = [{'id':row[0], 'name':row[1]} for row in result]
+    return idnames
 
-#inserDataIntoTable("prebuilt", 'TotaalBuildPrijs', getTotalBuildPrice(1))
-#getDataFromTable("prebuilt")
+def info_catcher_in_dictionary(table, id=None):
+    result = getDataFromTable(table)
+    if id is None:
+        match table:
+            case 'behuizing':
+                datalist = [{'id':row[0], 'naam': row[1], 'aantalFans':row[2], 'afmetingen':row[3], 'stock':row[4], 'prijs':row[5], 'leverancier':get_foreign_key_name('leverancier', row[6])} for row in result]
+                return datalist
+            case 'cpu':
+                datalist = [{'id':row[0], 'naam': row[1], 'clock':row[2], 'cores':row[3], 'socket':row[4], 'stock':row[5],'prijs':row[6], 'leverancier':get_foreign_key_name('leverancier', row[7])} for row in result]
+                return datalist
+            case 'gpu':
+                datalist = [{'id':row[0], 'naam': row[1], 'clock':row[2], 'vramcap':row[3], 'gddr':row[4], 'stock':row[5],'prijs':row[6], 'leverancier':get_foreign_key_name('leverancier', row[7])} for row in result]
+                return datalist
+            case 'moederbord':
+                datalist = [{'id':row[0], 'naam': row[1], 'socket':row[2], 'ddr':row[3], 'gddr':row[4], 'stock':row[5],'prijs':row[6], 'leverancier':get_foreign_key_name('leverancier', row[7])} for row in result]
+                return datalist
+            case 'opslag':
+                datalist = [{'id':row[0], 'naam': row[1], 'type':get_foreign_key_name('type', row[2]), 'capaciteit':row[3], 'stock':row[4], 'prijs':row[5], 'leverancier':get_foreign_key_name('leverancier', row[6])} for row in result]
+                return datalist
+            case 'psu':
+                datalist = [{'id':row[0], 'naam': row[1], 'watt':row[2], 'type':get_foreign_key_name('type', row[3]), 'stock':row[4], 'prijs':row[5], 'leverancier':get_foreign_key_name('leverancier', row[6])} for row in result]
+                return datalist
+            case 'ram':
+                datalist = [{'id':row[0], 'name': row[1], 'clock':row[2], 'capaciteit':row[3], 'ddr':row[4], 'stock':row[5], 'prijs':row[6], 'leverancier':get_foreign_key_name('leverancier', row[7])} for row in result]
+                return datalist
+            case _:
+                str = f''
+    else:
+        match table, id:    
+            case 'behuizing':
+                datalist = [{'naam': row[1], 'aantalFans':row[2], 'afmetingen':row[3], 'stock':row[4], 'prijs':row[5], 'leverancier':get_foreign_key_name('leverancier', row[6])} for row in result if row[0] == id]
+                return datalist
+            case 'cpu':
+                datalist = [{'naam': row[1], 'clock':row[2], 'cores':row[3], 'socket':row[4], 'stock':row[5],'prijs':row[6], 'leverancier':get_foreign_key_name('leverancier', row[7])} for row in result if row[0] == id]
+                return datalist
+            case 'gpu':
+                datalist = [{'naam': row[1], 'clock':row[2], 'vramcap':row[3], 'gddr':row[4], 'stock':row[5],'prijs':row[6], 'leverancier':get_foreign_key_name('leverancier', row[7])} for row in result if row[0] == id]
+                return datalist
+            case 'moederbord':
+                datalist = [{'naam': row[1], 'socket':row[2], 'ddr':row[3], 'gddr':row[4], 'stock':row[5],'prijs':row[6], 'leverancier':get_foreign_key_name('leverancier', row[7])} for row in result if row[0] == id]
+                return datalist
+            case 'opslag':
+                datalist = [{'naam': row[1], 'type':get_foreign_key_name('type', row[2]), 'capaciteit':row[3], 'stock':row[4], 'prijs':row[5], 'leverancier':get_foreign_key_name('leverancier', row[6])} for row in result if row[0] == id]
+                return datalist
+            case 'psu':
+                datalist = [{'naam': row[1], 'watt':row[2], 'type':get_foreign_key_name('type', row[3]), 'stock':row[4], 'prijs':row[5], 'leverancier':get_foreign_key_name('leverancier', row[6])} for row in result if row[0] == id]
+                return datalist
+            case 'ram':
+                datalist = [{'naam': row[1], 'clock':row[2], 'capaciteit':row[3], 'ddr':row[4], 'stock':row[5], 'prijs':row[6], 'leverancier':get_foreign_key_name('leverancier', row[7])} for row in result if row[0] == id]
+                return datalist
+            case _:
+                str = f''
+
