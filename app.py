@@ -2,22 +2,10 @@ from flask import Flask, render_template, request, redirect, url_for, session, j
 import storing_password as sp
 import data_functions as df
 
+
 # -----------------------------------------------------------------------------------------GLOBALS--------------------------------------------------------------------------------
 app = Flask(__name__, static_folder="static") #creates a Flask application instance named app
 app.secret_key = 'your_secret_key'
-
-ram = df.info_catcher_in_dictionary('ram')
-ram_info = [{key: ram_dict[key] for key in ('id', 'name', 'prijs')} for ram_dict in ram]
-
-components = {
-    'cpu': df.info_catcher_in_dictionary('cpu'),
-    'gpu': df.getIdAndNamesFromTable('gpu'),
-    'ram': ram_info,
-    'psu': df.getIdAndNamesFromTable('psu'),
-    'storage': df.getIdAndNamesFromTable('opslag'),
-    'mom': df.getIdAndNamesFromTable('moederbord'),
-    'case': df.getIdAndNamesFromTable('behuizing')
-}
 
 # -----------------------------------------------------------------------------------------INDEX.HTML--------------------------------------------------------------------------------
 @app.route("/")
@@ -72,8 +60,8 @@ def dashboard():
 @app.route('/get_options/<component>')
 def get_options(component):
     # Fetch options for the specified component
-    if component in components:
-        return jsonify(components[component])
+    if component in df.components:
+        return jsonify(df.components[component])
     else:
         return jsonify([]) 
 

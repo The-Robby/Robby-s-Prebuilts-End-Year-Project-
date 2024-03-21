@@ -18,16 +18,16 @@
         <div class="component-selection">
             <h3>Select CPU:</h3>
             <select id="cpu-select">
-
+                <option value="default" selected>Choose a Product</option>
             </select>
             <h4>Info:</h4>
-            <p id="cpu-info">Select a GPU to see its info.</p>
+            <p id="cpu-info">Select a CPU to see its info.</p>
         </div>
     
         <div class="component-selection">
             <h3>Select GPU:</h3>
             <select id="gpu-select">
-
+                <option value="default" selected>Choose a Product</option>
             </select>
             <h4>Info:</h4>
             <p id="gpu-info">Select a GPU to see its info.</p>
@@ -36,46 +36,46 @@
         <div class="component-selection">
             <h3>Select RAM:</h3>
             <select id="ram-select">
-
+                <option value="default" selected>Choose a Product</option>
             </select>
             <h4>Info:</h4>
-            <p id="info">Select a GPU to see its info.</p>
+            <p id="ram-info">Select a RAM to see its info.</p>
         </div>
 
         <div class="component-selection">
             <h3>Select PSU:</h3>
             <select id="psu-select">
-
+                <option value="default" selected>Choose a Product</option>
             </select>
             <h4>Info:</h4>
-            <p id="psu-info">Select a GPU to see its info.</p>
+            <p id="psu-info">Select a power supply unit<br> to see its info.</p>
         </div>
 
         <div class="component-selection">
             <h3>Select Storage:</h3>
             <select id="storage-select">
-
+                <option value="default" selected>Choose a Product</option>
             </select>
             <h4>Info:</h4>
-            <p id="storage-info">Select a GPU to see its info.</p>
+            <p id="storage-info">Select a storage to see its info.</p>
         </div>
 
         <div class="component-selection">
             <h3>Select Motherboard:</h3>
             <select id="mom-select">
-
+                <option value="default" selected>Choose a Product</option>
             </select>
             <h4>Info:</h4>
-            <p id="mom-info">Select a GPU to see its info.</p>
+            <p id="mom-info">Select a motherboard to see its info.</p>
         </div>
 
         <div class="component-selection">
             <h3>Select Case:</h3>
             <select id="case-select">
-
+                <option value="default" selected>Choose a Product</option>
             </select>
             <h4>Info:</h4>
-            <p id="info">Select a GPU to see its info.</p>
+            <p id="case-info">Select a case to see its info.</p>
         </div>
 
 
@@ -90,12 +90,24 @@
                 .then(response => response.json())
                 .then(data => {
                     const select = document.getElementById(selectId);
-                    select.innerHTML = ''; // Clear previous options
+                    // select.innerHTML = ''; // Clear previous options
                     data.forEach(option => {
                         const optionElem = document.createElement('option');
                         optionElem.value = option.id;
-                        optionElem.textContent = option.name;
+                        optionElem.textContent = option.naam;
                         optionElem.setAttribute('data-prijs', option.prijs);
+                        optionElem.setAttribute('data-ddr', option.ddr);
+                        optionElem.setAttribute('data-leverancier', option.leverancier);
+                        optionElem.setAttribute('data-gddr', option.gddr);
+                        optionElem.setAttribute('data-stock', option.stock);
+                        optionElem.setAttribute('data-aantalfans', option.aantalfans);
+                        optionElem.setAttribute('data-capaciteit', option.capaciteit);
+                        optionElem.setAttribute('data-clock', option.clock);
+                        optionElem.setAttribute('data-watt', option.watt);
+                        optionElem.setAttribute('data-type', option.type);
+                        optionElem.setAttribute('data-socket', option.socket);
+                        optionElem.setAttribute('data-cores', option.cores);
+                        optionElem.setAttribute('data-afmetingen', option.afmetingen);
                         select.appendChild(optionElem);
                     });
                     // Update info element with the price of the first option
@@ -103,12 +115,142 @@
                 })
                 .catch(error => console.error(`Error fetching options for ${component}:`, error));
         }
+        function checkstock(stock) {
+            if (stock > 3) {
+                    string = 'In stock!'
+                } else if (3 >= stock && stock > 0){
+                    string = 'Nearly out of stock!'
+                } else {
+                    string = "Out of stock!"
+                }
+                return string
+        }
 
-        document.getElementById('ram-select').addEventListener('change', function() {
-            var selectedOption = this.options[this.selectedIndex];
-            var prijs = selectedOption.getAttribute('data-prijs');
-            document.getElementById('info').innerText = '$'+prijs;
+        function addSelectChangeListeners() {
+            document.getElementById('ram-select').addEventListener('change', function() {
+                var selectedOption = this.options[this.selectedIndex];
+                var prijs = selectedOption.getAttribute('data-prijs');
+                var ddr = selectedOption.getAttribute('data-ddr');
+                var capaciteit = selectedOption.getAttribute('data-capaciteit');
+                var leverancier = selectedOption.getAttribute('data-leverancier');
+                var clock = selectedOption.getAttribute('data-clock');
+                var stock = selectedOption.getAttribute('data-stock');
+                stock = checkstock(stock)
+
+                document.getElementById('ram-info').innerText = 'Brand: ' + leverancier +
+                                                                '\nClock speed: ' + clock +
+                                                                '\nCapacity: ' + capaciteit + 
+                                                                '\nDDR' + ddr + 
+                                                                '\n\n\n\n\n\n' + stock +
+                                                                '\n\n$' + prijs;
+            });
+
+            document.getElementById('psu-select').addEventListener('change', function() {
+                var selectedOption = this.options[this.selectedIndex];
+                var prijs = selectedOption.getAttribute('data-prijs');
+                var stock = selectedOption.getAttribute('data-stock');
+                stock = checkstock(stock)
+                var watt = selectedOption.getAttribute('data-watt');
+                var type = selectedOption.getAttribute('data-type');
+                var leverancier = selectedOption.getAttribute('data-leverancier');
+                document.getElementById('psu-info').innerText = 'Brand: ' + leverancier +
+                                                                '\nWattage: ' + watt + 'W' +
+                                                                '\nType: ' + type + 
+                                                                '\n\n\n\n\n\n\n' + stock +
+                                                                '\n\n$' + prijs;
+            });
+
+            document.getElementById('cpu-select').addEventListener('change', function() {
+                var selectedOption = this.options[this.selectedIndex];
+                var prijs = selectedOption.getAttribute('data-prijs');
+                var stock = selectedOption.getAttribute('data-stock');
+                stock = checkstock(stock);
+                var leverancier = selectedOption.getAttribute('data-leverancier');
+                var cores = selectedOption.getAttribute('data-cores');
+                var clock = selectedOption.getAttribute('data-clock');
+                var socket = selectedOption.getAttribute('data-socket');
+
+                document.getElementById('cpu-info').innerText = 'Brand: ' + leverancier +
+                                                                '\nCores: ' + cores +
+                                                                '\nClock speed: ' + clock + 
+                                                                '\nSocket: ' + socket + 
+                                                                '\n\n\n\n\n\n' + stock +
+                                                                '\n\n$' + prijs;
+            });
+
+            document.getElementById('gpu-select').addEventListener('change', function() {
+                var selectedOption = this.options[this.selectedIndex];
+                var prijs = selectedOption.getAttribute('data-prijs');
+                var stock = selectedOption.getAttribute('data-stock');
+                stock = checkstock(stock)
+                var leverancier = selectedOption.getAttribute('data-leverancier');
+                var capaciteit = selectedOption.getAttribute('data-capaciteit');
+                var clock = selectedOption.getAttribute('data-clock');
+                var gddr = selectedOption.getAttribute('data-gddr');
+                
+                document.getElementById('gpu-info').innerText = 'Brand: ' + leverancier +
+                                                                '\nCapacity: ' + capaciteit + ' VRAM' +
+                                                                '\nClock speed: ' + clock + 
+                                                                '\nGDDR' + gddr + 
+                                                                '\n\n\n\n\n\n' + stock +
+                                                                '\n\n$' + prijs;
+            });
+
+            document.getElementById('mom-select').addEventListener('change', function() {
+                var selectedOption = this.options[this.selectedIndex];
+                var prijs = selectedOption.getAttribute('data-prijs');
+                var stock = selectedOption.getAttribute('data-stock');
+                stock = checkstock(stock)
+                var leverancier = selectedOption.getAttribute('data-leverancier');
+                var socket = selectedOption.getAttribute('data-socket');
+                var gddr = selectedOption.getAttribute('data-gddr');
+                var ddr = selectedOption.getAttribute('data-ddr');
+
+                document.getElementById('mom-info').innerText = 'Brand: ' + leverancier +
+                                                                '\nSocket: ' + socket +
+                                                                '\nGDDR: ' + gddr + 
+                                                                '\nDDR' + ddr + 
+                                                                '\n\n\n\n\n\n' + stock +
+                                                                '\n\n$' + prijs;
+            });
+
+            document.getElementById('storage-select').addEventListener('change', function() {
+                var selectedOption = this.options[this.selectedIndex];
+                var prijs = selectedOption.getAttribute('data-prijs');
+                var stock = selectedOption.getAttribute('data-stock');
+                stock = checkstock(stock)
+                var capaciteit = selectedOption.getAttribute('data-capaciteit');
+                var leverancier = selectedOption.getAttribute('data-leverancier');
+                var type = selectedOption.getAttribute('data-type');
+
+                document.getElementById('storage-info').innerText = 'Brand: ' + leverancier +
+                                                                '\nCapacity: ' + capaciteit +
+                                                                '\nType: ' + type + 
+                                                                '\n\n\n\n\n\n\n' + stock +
+                                                                '\n\n$' + prijs;
+            });
+
+            document.getElementById('case-select').addEventListener('change', function() {
+                var selectedOption = this.options[this.selectedIndex];
+                var prijs = selectedOption.getAttribute('data-prijs');
+                var stock = selectedOption.getAttribute('data-stock');
+                stock = checkstock(stock)
+                var leverancier = selectedOption.getAttribute('data-leverancier');
+                var aantalfans = selectedOption.getAttribute('data-aantalfans');
+                var afmetingen = selectedOption.getAttribute('data-afmetingen');
+
+                document.getElementById('case-info').innerText = 'Brand: ' + leverancier +
+                                                                '\nAmount of fans: ' + aantalfans +
+                                                                '\nDimensions: ' + afmetingen + 
+                                                                '\n\n\n\n\n\n\n' + stock +
+                                                                '\n\n$' + prijs;
+            });
+        }
+
+        window.addEventListener('load', function() {
+            addSelectChangeListeners();
         });
+
 
         // Fetch options for each component on page load
         fetchOptions('cpu', 'cpu-select');
