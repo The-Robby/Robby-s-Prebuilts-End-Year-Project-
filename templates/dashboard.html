@@ -107,7 +107,7 @@
         document.getElementById('ram-select').addEventListener('change', function() {
             var selectedOption = this.options[this.selectedIndex];
             var prijs = selectedOption.getAttribute('data-prijs');
-            document.getElementById('info').innerText = prijs;
+            document.getElementById('info').innerText = '$'+prijs;
         });
 
         // Fetch options for each component on page load

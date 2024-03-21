@@ -17,9 +17,13 @@ from flask import jsonify
 # df.inserDataIntoTable('cpu', 'Naam, Clock, Cores, Socket, Stock, Prijs, LeverancierID', '"i9-14900K", "6,0GHz", 24, "1700", 9, 639.00, 2')
 # df.update_prebuiltDB('cpu','Naam = "i9-13900K"', 'CPUID = 1')
 # print(df.get_foreign_key_name('type', 2))
+
+# ram = df.info_catcher_in_dictionary('ram')
+# ram_info = [{key: ram_dict[key] for key in ('id', 'naam')} for ram_dict in ram]
+
 ram = df.info_catcher_in_dictionary('ram')
-ram_info = [{key: ram_dict[key] for key in ('id', 'naam')} for ram_dict in ram]
-
+ram2 = df.info_catcher_in_dictionary('ram', 1)
+ram_info = [{key: ram_dict[key] for key in ('id', 'name', 'prijs')} for ram_dict in ram]
 print(ram_info)
-
-print(df.getIdAndNamesFromTable('ram'))
+print(ram2)
+# print(df.getIdAndNamesFromTable('ram'))

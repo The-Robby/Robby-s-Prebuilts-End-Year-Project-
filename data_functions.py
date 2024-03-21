@@ -97,28 +97,28 @@ def info_catcher_in_dictionary(table, id=None):
             case _:
                 str = f''
     else:
-        match table, id:    
+        match table:    
             case 'behuizing':
                 datalist = [{'naam': row[1], 'aantalFans':row[2], 'afmetingen':row[3], 'stock':row[4], 'prijs':row[5], 'leverancier':get_foreign_key_name('leverancier', row[6])} for row in result if row[0] == id]
-                return datalist
+                return datalist[0]
             case 'cpu':
                 datalist = [{'naam': row[1], 'clock':row[2], 'cores':row[3], 'socket':row[4], 'stock':row[5],'prijs':row[6], 'leverancier':get_foreign_key_name('leverancier', row[7])} for row in result if row[0] == id]
-                return datalist
+                return datalist[0]
             case 'gpu':
                 datalist = [{'naam': row[1], 'clock':row[2], 'vramcap':row[3], 'gddr':row[4], 'stock':row[5],'prijs':row[6], 'leverancier':get_foreign_key_name('leverancier', row[7])} for row in result if row[0] == id]
-                return datalist
+                return datalist[0]
             case 'moederbord':
                 datalist = [{'naam': row[1], 'socket':row[2], 'ddr':row[3], 'gddr':row[4], 'stock':row[5],'prijs':row[6], 'leverancier':get_foreign_key_name('leverancier', row[7])} for row in result if row[0] == id]
-                return datalist
+                return datalist[0]
             case 'opslag':
                 datalist = [{'naam': row[1], 'type':get_foreign_key_name('type', row[2]), 'capaciteit':row[3], 'stock':row[4], 'prijs':row[5], 'leverancier':get_foreign_key_name('leverancier', row[6])} for row in result if row[0] == id]
-                return datalist
+                return datalist[0]
             case 'psu':
                 datalist = [{'naam': row[1], 'watt':row[2], 'type':get_foreign_key_name('type', row[3]), 'stock':row[4], 'prijs':row[5], 'leverancier':get_foreign_key_name('leverancier', row[6])} for row in result if row[0] == id]
-                return datalist
+                return datalist[0]
             case 'ram':
                 datalist = [{'naam': row[1], 'clock':row[2], 'capaciteit':row[3], 'ddr':row[4], 'stock':row[5], 'prijs':row[6], 'leverancier':get_foreign_key_name('leverancier', row[7])} for row in result if row[0] == id]
-                return datalist
+                return datalist[0]
             case _:
                 str = f''
 
