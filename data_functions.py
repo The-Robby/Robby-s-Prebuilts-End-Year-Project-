@@ -7,24 +7,36 @@ def inserDataIntoTable(table, columnnames, values):
         conn = msql.connect(**dbDic) 
         if conn.is_connected():
             cursor = conn.cursor()
-            query = f'''INSERT INTO {table}({columnnames}) VALUES({values});'''
+            query = f'''INSERT INTO {table} ({columnnames}) VALUES ({values});'''
             cursor.execute(query)
             conn.commit()
             conn.close()
     except Error as e:
         print("Error while connecting to MySQL", e)
 
-def getDataFromTable(table):
-    try:
-        conn = msql.connect(**dbDic)
-        if conn.is_connected():
-            cursor = conn.cursor()
-            sql = f'''SELECT * FROM {table}'''
-            cursor.execute(sql)
-            result = cursor.fetchall()
-            return result
-    except Error as e:
-        print("Error while connecting to MySQL", e)
+def getDataFromTable(table, where=None):
+    if where is None:
+        try:
+            conn = msql.connect(**dbDic)
+            if conn.is_connected():
+                cursor = conn.cursor()
+                sql = f'''SELECT * FROM {table}'''
+                cursor.execute(sql)
+                result = cursor.fetchall()
+                return result
+        except Error as e:
+            print("Error while connecting to MySQL", e)
+    else:
+        try:
+            conn = msql.connect(**dbDic)
+            if conn.is_connected():
+                cursor = conn.cursor()
+                sql = f'''SELECT * FROM {table} WHERE {where}'''
+                cursor.execute(sql)
+                result = cursor.fetchall()
+                return result
+        except Error as e:
+            print("Error while connecting to MySQL", e)
 
 def getTotalBuildPrice(prebuiltid):
     try:
@@ -64,11 +76,6 @@ def get_foreign_key_name(table, fk):
     except Error as e:
         print("Error while connecting to MySQL", e)
 
-def getIdAndNamesFromTable(table):
-    result = getDataFromTable(table)
-    idnames = [{'id':row[0], 'name':row[1]} for row in result]
-    return idnames
-
 def info_catcher_in_dictionary(table, id=None):
     result = getDataFromTable(table)
     if id is None:
@@ -94,6 +101,9 @@ def info_catcher_in_dictionary(table, id=None):
             case 'ram':
                 datalist = [{'id':row[0], 'naam': row[1], 'clock':row[2], 'capaciteit':row[3], 'ddr':row[4], 'stock':row[5], 'prijs':row[6], 'leverancier':get_foreign_key_name('leverancier', row[7])} for row in result]
                 return datalist
+            case 'user':
+                datalist = [{'id':row[0], 'gebruikersnaam': row[1], 'pass':row[2], 'naam':row[3], 'adres':row[4], 'uitgegeven':row[5], 'isadmin':row[6]} for row in result]
+                return datalist
             case _:
                 str = f''
     else:
@@ -118,6 +128,9 @@ def info_catcher_in_dictionary(table, id=None):
                 return datalist[0]
             case 'ram':
                 datalist = [{'naam': row[1], 'clock':row[2], 'capaciteit':row[3], 'ddr':row[4], 'stock':row[5], 'prijs':row[6], 'leverancier':get_foreign_key_name('leverancier', row[7])} for row in result if row[0] == id]
+                return datalist[0]
+            case 'user':
+                datalist = [{'id':row[0], 'gebruikersnaam': row[1], 'pass':row[2], 'naam':row[3], 'adres':row[4], 'uitgegeven':row[5], 'isadmin':row[6]} for row in result if row[0] == id]
                 return datalist[0]
             case _:
                 str = f''

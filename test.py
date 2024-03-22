@@ -24,6 +24,7 @@ from flask import jsonify
 ram = df.info_catcher_in_dictionary('ram')
 ram2 = df.info_catcher_in_dictionary('ram', 1)
 ram_info = [{key: ram_dict[key] for key in ('id', 'naam', 'prijs')} for ram_dict in ram]
-print(ram_info)
 print(ram)
+print(ram2)
+print(ram_info)
 # print(df.getIdAndNamesFromTable('ram'))

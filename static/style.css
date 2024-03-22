@@ -52,7 +52,7 @@ body {
     font-size: xx-large;
 }
 
-h2,h1,p {
+h3,h2,h1,p {
     text-align: center;
 }
 
@@ -176,12 +176,67 @@ a:hover {
     gap: 10px;
 }
 
-.password-toggle {
-    position: absolute;
-    right: 5px;
-    top: 50%;
-    transform: translateY(-50%);
+.password-toggle-login {
+    position: absolute ;
+    top: 52.2%;
+    right: 39.5%;
     cursor: pointer;
 
+}
+.password-toggle-register {
+    position: absolute ;
+    top: 42.4%;
+    right: 39.5%;
+    cursor: pointer;
+}
+
+.options-dashboard {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    flex-direction: row;
+    padding: 10px;
+    background-color: #333;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    max-width: auto; /* Adjust as needed */
+    margin: 20px;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    gap: 10px;
+}
+
+.options-item {
+    margin-top: 20px;
+    background-color: #242424;
+    padding: 10px;
+    border-radius: 6px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.add-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 10px;
+    background-color: #333;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    max-width: auto; 
+    margin: 20px;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    gap: 10px;
+}
+.add-item {
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 6px;
+    gap: 10px;
 }
 

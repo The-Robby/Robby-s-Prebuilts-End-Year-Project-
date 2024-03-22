@@ -24,21 +24,12 @@
             
             <label for="password">Password</label>
             <input type="password" id="password" name="password" required>
-            <span class="password-toggle" onclick="togglePassword()">👁️</span>
-            <script>
-                function togglePassword() {
-                    var passwordField = document.getElementById("password");
-                    var toggleButton = document.querySelector(".password-toggle");
-                    if (passwordField.type === "password") {
-                        passwordField.type = "text";
-                        toggleButton.textContent = "👁️";
-                    } else {
-                        passwordField.type = "password";
-                        toggleButton.textContent = "👁️";
-                    }
-                }
-            </script>
-
+            {% if not register %}
+            <span class="password-toggle-login" onclick="togglePassword()">👁️</span>
+            {% endif %}
+            {% if register %}
+            <span class="password-toggle-register" onclick="togglePassword()">👁️</span>
+            {% endif %}
 
             {% if register %}
             <div class="progress">
@@ -76,6 +67,18 @@
         <a href="/">Back</a>
         </div>
     </div>
-    
+    <script>
+        function togglePassword() {
+            var passwordField = document.getElementById("password");
+            var toggleButton = document.querySelector(".password-toggle");
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                toggleButton.textContent = "👁️";
+            } else {
+                passwordField.type = "password";
+                toggleButton.textContent = "👁️";
+            }
+        }
+    </script>
 </body>
 </html>

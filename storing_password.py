@@ -19,16 +19,17 @@ def create_connection():
     conn = msql.connect(**dbDic)
     return conn
 
-def store_user(username, password):
+def store_user(username, password, naam, adres, admin=0):
     salt=os.urandom(32)
     hashed_password = create_hash(password,salt)
    
     conn = create_connection()
     if conn.is_connected():
         cursor = conn.cursor()       
-        query = f'''call insert_user_account( %s, %s, %s);'''
-        val = (username, hashed_password, salt.decode('latin1'))
-        cursor.execute(query,val)
+        # query = f'''call insert_user_account( %s, %s, %s);'''
+        # val = (username, hashed_password, salt.decode('latin1'))
+        # cursor.execute(query,val)
+        cursor.callproc("insert_user_account", [username, hashed_password, salt.decode('latin1'), naam, adres, admin])
         conn.commit()
         conn.close()
 
@@ -60,6 +61,20 @@ def get_userID(username):
         cursor.close()
         conn.close()
 
+def get_user_data(username):
+    try:
+        conn = create_connection()
+        cursor = conn.cursor()
+        result = cursor.callproc("get_userID", [username, 0])
+        user_id = result[1]
+        return user_id
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+    finally:
+        # Close the cursor and connection
+        cursor.close()
+        conn.close()
 
 def check_pass_cond(password):
     pattern = re.compile(r'^(?=.*[a-z])(?=.*\d)(?=.*[A-Z])(?=.*[\W_])[a-zA-Z0-9\W_]{6,12}$')
