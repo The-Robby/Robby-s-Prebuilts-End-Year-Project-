@@ -38,7 +38,7 @@ def getDataFromTable(table, where=None):
         except Error as e:
             print("Error while connecting to MySQL", e)
 
-def getTotalBuildPrice(prebuiltid):
+def get_prebuilt_price(prebuiltid):
     try:
         conn = msql.connect(**dbDic)
         if conn.is_connected():
@@ -102,7 +102,7 @@ def info_catcher_in_dictionary(table, id=None):
                 datalist = [{'id':row[0], 'naam': row[1], 'clock':row[2], 'capaciteit':row[3], 'ddr':row[4], 'stock':row[5], 'prijs':row[6], 'leverancier':get_foreign_key_name('leverancier', row[7])} for row in result]
                 return datalist
             case 'user':
-                datalist = [{'id':row[0], 'gebruikersnaam': row[1], 'pass':row[2], 'naam':row[3], 'adres':row[4], 'uitgegeven':row[5], 'isadmin':row[6]} for row in result]
+                datalist = [{'id':row[0], 'gebruikersnaam': row[1], 'pass':row[2], 'naam':row[3], 'adres':row[4], 'uitgegeven':row[5], 'isadmin':row[6], 'cart': []} for row in result]
                 return datalist
             case _:
                 str = f''
@@ -130,10 +130,18 @@ def info_catcher_in_dictionary(table, id=None):
                 datalist = [{'naam': row[1], 'clock':row[2], 'capaciteit':row[3], 'ddr':row[4], 'stock':row[5], 'prijs':row[6], 'leverancier':get_foreign_key_name('leverancier', row[7])} for row in result if row[0] == id]
                 return datalist[0]
             case 'user':
-                datalist = [{'id':row[0], 'gebruikersnaam': row[1], 'pass':row[2], 'naam':row[3], 'adres':row[4], 'uitgegeven':row[5], 'isadmin':row[6]} for row in result if row[0] == id]
+                datalist = [{'id':row[0], 'gebruikersnaam': row[1], 'pass':row[2], 'naam':row[3], 'adres':row[4], 'uitgegeven':row[5], 'isadmin':row[6], 'cart': []} for row in result if row[0] == id]
                 return datalist[0]
             case _:
                 str = f''
+
+def make_cart(itemlistdict):
+    list_of_names = [dict['leverancier'] + ' ' + dict['naam'] for dict in itemlistdict]
+    totalprice = 0
+    for dict in itemlistdict:
+        totalprice += dict['prijs']
+    return list_of_names, totalprice
+
 
 components = {
     'cpu': info_catcher_in_dictionary('cpu'),

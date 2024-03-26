@@ -16,24 +16,28 @@ def index():
 def logout():
     if 'account' in session:
         session.pop('account')
+    session.clear()
     return redirect(url_for('index'))
 
 # -----------------------------------------------------------------------------------------LOGIN.HTML--------------------------------------------------------------------------------
 @app.route("/login", methods=['GET', 'POST'])
 def login():
+    session.clear()
     if request.method == 'POST':
         username = request.form['username']
         username = username.lower()
         password = request.form['password']
         UserID = sp.get_userID(username)
-        if sp.check_password(UserID ,password):
-            session['account'] = df.info_catcher_in_dictionary('user', UserID)
-            return redirect(url_for('dashboard'))
+        if UserID != None:
+            if sp.check_password(UserID ,password):
+                session['account'] = df.info_catcher_in_dictionary('user', UserID)
+                return redirect(url_for('dashboard'))
         return render_template("login.html", wrongcredentials=True)
     return render_template("login.html")
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
+    session.clear()
     if request.method == 'POST':
         username = request.form['username']
         username = username.lower()
@@ -64,6 +68,7 @@ def register():
 def dashboard():
     if 'account' in session:
         account = session['account']
+        print(account)
         admin = False
         if account['isadmin'] == 1:
             admin = True
@@ -93,10 +98,14 @@ def addtocart():
         if request.method == 'POST':
             itemIDlist = [int(item[1]) for item in request.form.items() if item[1] != 'default']
             itemlist = [df.info_catcher_in_dictionary(item[0],int(item[1])) for item in request.form.items() if item[1] != 'default']
-            print(itemIDlist)
-            
+            cartlist = df.make_cart(itemlist)
+            products = cartlist[0]
+            totalprice = cartlist[1]
+
+            # account['cart'] = itemIDlist
+            # session['account'] = account            
             reviewcart = True
-            return render_template('builder.html', account=account, reviewcart=reviewcart)
+            return render_template('builder.html', account=account, reviewcart=reviewcart, products=products, totalprice=totalprice)
         else:
             redirect(url_for('login'))
     return redirect(url_for('login'))

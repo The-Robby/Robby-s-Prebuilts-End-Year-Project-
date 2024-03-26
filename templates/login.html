@@ -54,14 +54,29 @@
         </form>
         {% if register and wrongpass%}
         <fail>Seems that your password does not meet security expectations!<br>Your password must have 1 uppercase, 1 lowercase, 1 digit, 1 special character and between 6 and 12 long.</fail>
+        <style>
+            .password-toggle-register {
+                top: 35.9%;
+            }
+        </style>
         {% endif %}
 
         {% if register and wrongname%}
         <fail>Seems that {{username}} already exists! Chose another username!</fail>
+        <style>
+            .password-toggle-register {
+                top: 38.8%;
+            }
+        </style>
         {% endif %}
 
         {% if wrongcredentials %}
         <fail>Your credentials seem wrong! Try again!</fail>
+        <style>
+            .password-toggle-login {
+                top: 49.7%;
+            }
+        </style>
         {% endif %}
 
         <a href="/">Back</a>

@@ -6,10 +6,24 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>PC Parts Builder</title>
 </head>
+
 <body>
+    {% if reviewcart %}
+    <topbar>
+    <img src="https://static.vecteezy.com/system/resources/previews/019/787/018/original/shopping-cart-icon-shopping-basket-on-transparent-background-free-png.png" alt="cart" height="40">
+    </topbar>
+    {% endif %}
     {% if reviewcart is not none %}
     <!-- to be contineud -->
-
+    <div class="cart-screen">
+        {% for item in products %}
+        <li>{{ item }}</li>
+        {% endfor %}
+        <p>Total price: {{ totalprice }}</p>
+        <a href="buy">Buy!</a>
+        <a href="builder">Back to builder</a>
+        <a href="dashboard">Back to dashboard</a>
+    </div>
     {% endif %}
 
 

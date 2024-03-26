@@ -6,6 +6,15 @@ body {
     color: #fff;
 }
 
+topbar {
+    background-color: #f0f0f0;
+    width: 100%;
+    height: 40px;
+    position: fixed; 
+    top: 0; 
+}
+
+
 @keyframes fadeInAnimation {
     0% {
         opacity: 0;
@@ -126,6 +135,7 @@ a:hover {
     background-color: #242424;
     padding: 10px;
     border-radius: 6px;
+    width: 190px;
 }
 
 .component-selection p {
@@ -238,5 +248,21 @@ a:hover {
     padding: 10px;
     border-radius: 6px;
     gap: 10px;
+}
+
+.cart-screen {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    flex-direction: column;
+    padding: 10px;
+    background-color: #333;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    max-width: auto; /* Adjust as needed */
+    margin: 20px;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    gap: 10px;   
 }
 
