@@ -1,10 +1,8 @@
-CREATE DATABASE  IF NOT EXISTS `prebuiltdb` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `prebuiltdb`;
--- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.36, for Win64 (x86_64)
 --
 -- Host: localhost    Database: prebuiltdb
 -- ------------------------------------------------------
--- Server version	8.0.35
+-- Server version	8.0.36
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -67,7 +65,7 @@ CREATE TABLE `cpu` (
   PRIMARY KEY (`CPUID`),
   KEY `LevInCpu_idx` (`LeverancierID`),
   CONSTRAINT `LevInCpu` FOREIGN KEY (`LeverancierID`) REFERENCES `leverancier` (`LeverancierID`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -76,7 +74,7 @@ CREATE TABLE `cpu` (
 
 LOCK TABLES `cpu` WRITE;
 /*!40000 ALTER TABLE `cpu` DISABLE KEYS */;
-INSERT INTO `cpu` VALUES (1,'I9 13900K','5,2GHz',24,'1700',5,675.95,2);
+INSERT INTO `cpu` VALUES (1,'i9-13900K','5,2GHz',24,'1700',5,675.95,2),(2,'i9-14900K','6,0GHz',24,'1700',9,639,2),(3,'i7-14700K','5,6 GHz',20,'1700',0,459,2);
 /*!40000 ALTER TABLE `cpu` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -351,7 +349,7 @@ CREATE TABLE `user` (
   `IsAdmin` tinyint DEFAULT NULL,
   `Salt` varchar(200) NOT NULL,
   PRIMARY KEY (`UserID`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -360,208 +358,9 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'Robbert','f65d2de7cedb039b61524a007564702218ccf74ea3b9cbb74d745be661eedff8','Robbert Groffi','Halingenstraat 32',3061.74,1,'³LRÖÞº\n­Q$ÿjLó<B<ÉÄ5YäÃQÊ'),(16,'Robbyvgaming','2e9e4e019dd50a05b4b80d7e5d59a25aeabae28b88ded3334266e3d510ff0c76',NULL,NULL,NULL,NULL,'­¾:F\"Ò¡Ê¼Ì$¿\nÞÆï\"&\ZK c\r');
+INSERT INTO `user` VALUES (18,'admin','a15a80a3d51b2d4fef427803191341bee161377dc63242b305414bdeb079b72b','Admin','AdminStreet',NULL,1,'9²tÂ»üÅ:N\'\Z÷ÈzxÜmèc°Þ'),(19,'robbyvgaming','7a0c62479b7264d99d400181518afca60cb2d1a874a63caaf8e07c15f58b5750','Robbert Groffi','Halingenstraat 32, Velm 3806',NULL,0,']TzK×Y2^è¼mÄ	¦õg»Ô²ÖÔY¶'),(20,'victoria','45027579fbb86c7982ca78d43667ef3c7f0c7818410ff8abb10af20a4ea1f745','Victoria Crauwels','Neger is de poepstraat 32',NULL,0,'¸hÞñÙÄµÈ9%kø¥Ëçz&/¶Ã\0äg%N');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Dumping routines for database 'prebuiltdb'
---
-/*!50003 DROP PROCEDURE IF EXISTS `get_items_from` */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_items_from`(IN _leverancier_id INT)
-BEGIN
-    -- Behuizing table
-    SELECT BehuizingID AS ID, Naam FROM behuizing WHERE LeverancierID = _leverancier_id
-
-    UNION
-
-    -- CPU table
-    SELECT CPUID AS ID, Naam FROM cpu WHERE LeverancierID = _leverancier_id
-
-    UNION
-
-    -- GPU table
-    SELECT GPUID AS ID, Naam FROM gpu WHERE LeverancierID = _leverancier_id
-
-    UNION
-
-    -- Moederbord table
-    SELECT MomID AS ID, Naam FROM moederbord WHERE LeverancierID = _leverancier_id
-
-    UNION
-
-    -- Opslag table
-    SELECT OpslagID AS ID, Naam FROM opslag WHERE LeverancierID = _leverancier_id
-
-    UNION
-
-    -- PSU table
-    SELECT PSUID AS ID, Naam FROM psu WHERE LeverancierID = _leverancier_id
-
-    UNION
-
-    -- RAM table
-    SELECT RAMID AS ID, Naam FROM ram WHERE LeverancierID = _leverancier_id;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `get_stock` */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_stock`(IN _id INT, IN _table VARCHAR(45))
-BEGIN
-    -- Find the primary key column
-    SELECT COLUMN_NAME INTO @primary_key
-    FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
-    WHERE TABLE_SCHEMA = 'prebuiltdb'
-      AND TABLE_NAME = _table
-      AND CONSTRAINT_NAME = 'PRIMARY';
-
-    -- Check if primary key column is found
-    IF @primary_key IS NOT NULL THEN
-        SET @sql = CONCAT('
-            SELECT Stock
-            FROM ', _table, '
-            WHERE ', @primary_key, ' = ', _id, ';
-        ');
-
-        PREPARE stmt FROM @sql;
-        EXECUTE stmt;
-        DEALLOCATE PREPARE stmt;
-    ELSE
-        SELECT 'Primary key column not found for table: ', _table AS Message;
-    END IF;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `get_total_price` */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_total_price`(
-    IN _prebuilt_id INT
-)
-BEGIN
-    -- Initialize variable for total sum
-    DECLARE total_price FLOAT;
-
-    -- Calculate total sum for all tables
-    SELECT 
-        SUM(Prijs) INTO total_price
-    FROM (
-        SELECT Prijs FROM behuizing WHERE BehuizingID = (SELECT BehuizingID FROM prebuilt WHERE PrebuiltID = _prebuilt_id)
-        UNION ALL
-        SELECT Prijs FROM cpu WHERE CPUID = (SELECT CPUID FROM prebuilt WHERE PrebuiltID = _prebuilt_id)
-        UNION ALL
-        SELECT Prijs FROM gpu WHERE GPUID = (SELECT GPUID FROM prebuilt WHERE PrebuiltID = _prebuilt_id)
-        UNION ALL
-        SELECT Prijs FROM moederbord WHERE MomID = (SELECT MomID FROM prebuilt WHERE PrebuiltID = _prebuilt_id)
-        UNION ALL
-        SELECT Prijs FROM opslag WHERE OpslagID = (SELECT OpslagID FROM prebuilt WHERE PrebuiltID = _prebuilt_id)
-        UNION ALL
-        SELECT Prijs FROM psu WHERE PSUID = (SELECT PSUID FROM prebuilt WHERE PrebuiltID = _prebuilt_id)
-        UNION ALL
-        SELECT Prijs FROM ram WHERE RAMID = (SELECT RAMID FROM prebuilt WHERE PrebuiltID = _prebuilt_id)
-    ) AS combined_tables;
-
-    -- Return the total sum in a single column
-    SELECT total_price AS TotalPrice;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `get_user` */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_user`(in _id INT)
-BEGIN
-	SELECT *
-    FROM user
-    WHERE UserID = _id;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `get_userID` */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_userID`(IN p_Gebruikersnaam VARCHAR(255), OUT p_userID INT)
-BEGIN
-    SELECT userID INTO p_userID
-    FROM user
-    WHERE Gebruikersnaam = p_Gebruikersnaam;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `insert_user_account` */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_user_account`(in _gebruikersnaam varchar(45), in _passwoord varchar(200), in _salt varchar(200))
-BEGIN
-	INSERT INTO user(Gebruikersnaam, Passwoord, Salt)
-    VALUES(_gebruikersnaam, _passwoord, _salt);
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -572,4 +371,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-03-21 14:03:09
+-- Dump completed on 2024-04-02 18:06:34
