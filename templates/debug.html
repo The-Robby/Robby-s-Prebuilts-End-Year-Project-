@@ -36,25 +36,29 @@
         </div>
         {% endif %}
     </topbar>
-    <div class="options-dashboard">
-        <div class="options-item">
-            <h2 id="title">Build your pc now!</h2>
-            <img src="{{ url_for('static', filename='images/gamingdesktop.png') }}" alt="Main Product" width="340">
-            <a href="builder">Go to Builder!</a>
+    <div class="add-container">
+        {% if table is none %}
+        <h1>Which table do you want to debug?</h1>
+        <div class="add-item">
+            <a href="debug?table=cpu">CPU</a>
+            <a href="debug?table=gpu">GPU</a>
+            <a href="debug?table=ram">RAM</a>
+            <a href="debug?table=psu">PSU</a>
+            <a href="debug?table=moederbord">Motherboard</a>
+            <a href="debug?table=opslag">Storage</a>
+            <a href="debug?table=behuizing">Case</a>
+            <a href="debug?table=user">User</a>
+            <a href="debug?table=type">Type</a>
+            <a href="debug?table=prebuilt">Prebuilt</a>
+            <a href="debug?table=leverancier">Brand</a>
+            <a href="dashboard">Go back to dashboard</a>
         </div>
-    {% if admin %}
-        <div class="options-item">
-            <h2 id="title">Add items to any table</h2>
-            <img src="{{ url_for('static', filename='images/gpu.png') }}" alt="Main Product" width="340">
-            <a href="additem">Add items</a>
-        </div>
-        <div class="options-item">
-            <h2 id="title">Update Items from any table</h2>
-            <img src="{{ url_for('static', filename='images/gpu.png') }}" alt="Main Product" width="340">
-            <a href="updateitem">Update items</a>
-        </div>
-    {% endif %}
+        {% else %}
+        <h2>{{table}}</h2>
+        {% for item in items %}
+        <li>{{item}}</li>
+        {% endfor %}
+        <a href="debug">back</a>
+        {% endif %}
     </div>
-    
 </body>
-</html>

@@ -36,25 +36,12 @@
         </div>
         {% endif %}
     </topbar>
-    <div class="options-dashboard">
-        <div class="options-item">
-            <h2 id="title">Build your pc now!</h2>
-            <img src="{{ url_for('static', filename='images/gamingdesktop.png') }}" alt="Main Product" width="340">
-            <a href="builder">Go to Builder!</a>
-        </div>
-    {% if admin %}
-        <div class="options-item">
-            <h2 id="title">Add items to any table</h2>
-            <img src="{{ url_for('static', filename='images/gpu.png') }}" alt="Main Product" width="340">
-            <a href="additem">Add items</a>
-        </div>
-        <div class="options-item">
-            <h2 id="title">Update Items from any table</h2>
-            <img src="{{ url_for('static', filename='images/gpu.png') }}" alt="Main Product" width="340">
-            <a href="updateitem">Update items</a>
-        </div>
-    {% endif %}
+    <div class="user-info">
+        <h2>User Info</h2>
+        <div class="user-info-cont"><p id="user-info-key">Username: <p id="user-info-value">{{username}}</p></p></div>
+        <div class="user-info-cont"><p id="user-info-key">Name: <p id="user-info-value">{{name}}</p></p></div>
+        <div class="user-info-cont"><p id="user-info-key">Delivery adres: <p id="user-info-value">{{adres}}</p></p></div>
+        <div class="user-info-cont"><p id="user-info-key">Total money spent: <p id="user-info-value">${{spent}}</p></p></div>
+        <a href="dashboard">Back to dashboard</a>
     </div>
-    
 </body>
-</html>

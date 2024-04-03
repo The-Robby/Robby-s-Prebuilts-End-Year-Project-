@@ -14,21 +14,26 @@ def index():
 
 @app.route("/logout")
 def logout():
+    # Here we logout any accounts left in the users session
     if 'account' in session:
-        session.pop('account')
+        session.pop('account') 
     session.clear()
     return redirect(url_for('index'))
 
 # -----------------------------------------------------------------------------------------LOGIN.HTML--------------------------------------------------------------------------------
 @app.route("/login", methods=['GET', 'POST'])
 def login():
+    # start with empty session to be sure
     session.clear()
     if request.method == 'POST':
+        # we get username, all in lowercase and password and pass the username to get its ID
         username = request.form['username']
         username = username.lower()
         password = request.form['password']
         UserID = sp.get_userID(username)
+        # if it return something it means it exists, we now pass the id togheter with the password
         if UserID != None:
+            # if they match the ones in the DB we add all the info from the user to the session
             if sp.check_password(UserID ,password):
                 session['account'] = df.info_catcher_in_dictionary('user', UserID)
                 return redirect(url_for('dashboard'))
@@ -37,8 +42,10 @@ def login():
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
+    # start with empty session to be sure
     session.clear()
     if request.method == 'POST':
+        # we ask for all the users details from the form filled in in the html
         username = request.form['username']
         username = username.lower()
         password = request.form['password']
@@ -49,10 +56,15 @@ def register():
             if isadmin == True:
                 isadmin = 1
         else: isadmin = 0
+        # now we check if the name already exists or not
         if not sp.username_already_exists(username):
+            # now we check if the password is strong enough and meets the conditions
             if sp.check_pass_cond(password):
+                # now we put all the users info in the database
                 sp.store_user(username, password, name, adres, isadmin)
+                # get the newly created user id
                 UserID = sp.get_userID(username)
+                # use it to get all the info in the correct datatype and structure and put it in the session
                 session['account'] = df.info_catcher_in_dictionary('user', UserID)
                 return redirect(url_for('dashboard'))
             else:
@@ -68,8 +80,8 @@ def register():
 def dashboard():
     if 'account' in session:
         account = session['account']
-        print(account)
         admin = False
+        # render dashboard based on admin or not
         if account['isadmin'] == 1:
             admin = True
         return render_template('dashboard.html', account=account, admin=admin)
@@ -85,222 +97,269 @@ def builder():
 
 @app.route('/get_options/<component>')
 def get_options(component):
-    # Fetch options for the specified component
+    # Fetch options for the specified component which has been passed on from the html
     if component in df.components:
         return jsonify(df.components[component])
     else:
         return jsonify([])
     
+#-----------------------------------------------------------------------------------------------CART PART---------------------------------------------------------------------------------------
 @app.route('/addtocart', methods=['GET', 'POST'])
 def addtocart():
     if 'account' in session:
         account = session['account']
         if request.method == 'POST':
-            itemIDlist = [int(item[1]) for item in request.form.items() if item[1] != 'default']
+            # we create the itemlist to get every possible information about every product inside a structured datatype
             itemlist = [df.info_catcher_in_dictionary(item[0],int(item[1])) for item in request.form.items() if item[1] != 'default']
+            # now we simplify it for visual purposes
             cartlist = df.make_cart(itemlist)
+            # pass the 2 returned values on, first is a list, second is a float
             products = cartlist[0]
-            totalprice = cartlist[1]
+            totalprice = round(cartlist[1], 2)
 
-            # account['cart'] = itemIDlist
-            # session['account'] = account            
-            reviewcart = True
-            return render_template('builder.html', account=account, reviewcart=reviewcart, products=products, totalprice=totalprice)
+            # we add all the items into the sessions cart
+            account['cart'].extend(itemlist)
+            # update the session 
+            session.modified = True  
+            # we pass this variable to ensure we get the right html layout
+            addtocart = True
+            return render_template('builder.html', account=account, addtocart=addtocart, products=products, totalprice=totalprice)
         else:
-            redirect(url_for('login'))
+            return redirect(url_for('login'))
     return redirect(url_for('login'))
+
+@app.route('/viewcart', methods=['GET', 'POST'])
+def viewcart():
+    if 'account' in session:
+        account = session['account']
+        # only if the cart is empty we show an empty cart text
+        if len(account['cart']) == 0:
+            products = ()
+            totalprice = 0
+            return render_template('builder.html', account=account, reviewcart=True, addtocart=False, buycart=False, products=products, totalprice=totalprice)
+        else:
+            # we simplify the itemlist stored in the sessions 'cart' for visual purposes
+            cartlist = df.make_cart(account['cart'])
+            # split the 2 returned values, 1st list, 2nd float
+            products = cartlist[0]
+            totalprice = round(cartlist[1], 2)
+            return render_template('builder.html', account=account, reviewcart=True, addtocart=False, buycart=False, products=products, totalprice=totalprice)
+    return redirect(url_for('login'))
+
+@app.route('/delete-item')
+def delete_item():
+    if 'account' in session:
+        account = session['account']
+        # we ask the item name that is passed through the url
+        item_name = request.args.get('item')
+        # simplifying the itemlist stored in the sessions 'cart'
+        cart =  df.make_cart(account['cart']) 
+        # initialize deleted item
+        deleted_item = None
+        # get the index of the product you want to delete inside 'i'
+        for i in range(len(cart[0])):
+            # if the passed on name is the same as the name in the shopping cart, delete it
+            if cart[0][i] == item_name:
+                deleted_item = i
+                # remove the item('i') from 'cart' 
+                account['cart'].pop(i)
+                # stop when the item has been found
+                break
+        # save the session
+        session.modified = True  
+        return redirect(url_for('viewcart')) if deleted_item is not None else f'could not delete {cart[0][deleted_item]}'
+    else:
+        return redirect(url_for('login'))
+    
+@app.route("/buy")
+def buy():
+    if 'account' in session:
+        account = session['account']
+        if account['cart'] != []:
+            table = 'user'
+            cartlist = df.make_cart(account['cart'])
+            products = cartlist[0]
+            totalprice = round(cartlist[1],2)
+            moneyspent = df.info_catcher_in_dictionary(table, account['id'])['uitgegeven']
+            if moneyspent is None:
+                moneyspent = 0
+            totalmoneyspent = totalprice + moneyspent
+            account['cart'] = []
+            account['uitgegeven'] = totalmoneyspent
+            session['account'] = account
+            session.modified = True
+            df.update_prebuiltDB(table, f'uitgegeven = {totalmoneyspent}', f'userid = {account['id']}')
+    return render_template("builder.html", account=account, reviewcart=False, addtocart=False, buycart=True, products=products, totalprice=totalprice)
+
+#------------------------------------------------------------------------------------------DEBUG.HTML----------------------------------------------------------------------------------
+@app.route("/debug")
+def debug():
+    if 'account' in session:
+        account = session['account']
+        if account['isadmin'] == 1:
+            table = request.args.get('table')
+            items = df.getDataFromTable(table)
+        else:
+            return redirect(url_for('login'))
+    return render_template("debug.html", account=account, table=table, items=items)
+
+#------------------------------------------------------------------------------------------DEBUG.HTML----------------------------------------------------------------------------------
+@app.route("/profile")
+def profile():
+    if 'account' in session:
+        account = session['account']
+        adres = account['adres']
+        username = account['gebruikersnaam']
+        name = account['naam']
+        spent = account['uitgegeven']
+
+    else:
+        return redirect(url_for('login'))
+    return render_template("profile-info.html", account=account, adres=adres, username=username, name=name, spent=spent)
 
 # -----------------------------------------------------------------------------------------ADDITEM.HTML--------------------------------------------------------------------------------
 @app.route('/additem', methods=['GET', 'POST'])
 def additem():
     if 'account' in session:
         account = session['account']
+        # only render this html if you are admin
         if account['isadmin'] == 1:
             admin = True
+            # get the specified table and show options accordingly
+            table = request.args.get('table')
+            match table:
+                case 'cpu':
+                    # initialize values string for sql querry
+                    values = ''
+                    if request.method == 'POST':
+                        # distinguish all types
+                        for key, value in request.form.items(): 
+                            # distinguish all strings
+                            if key in ('naam', 'clock', 'socket'): 
+                                values += '"' + value + '",' 
+                            # distinguish all numeric values
+                            else:
+                                values += value
+                                values += ','  
+                        # if string is empty abort to exclude errors
+                        if values != '':
+                            values = values.rstrip(",")
+                            print(values)
+                            # add the values string to the querry
+                            df.inserDataIntoTable(table, 'Naam, Clock, Cores, Socket, Stock, Prijs, LeverancierID', values)
+                            return render_template('additem.html', account=account, admin=admin, table=None)
+                    # clear the string to exclude eny further errors
+                    values = ''
+                    return render_template('additem.html', account=account, admin=admin, table=table)
+                #  rinse and repeat
+                case 'gpu':
+                    values = ''
+                    if request.method == 'POST':
+                        for key, value in request.form.items(): 
+                            if key in ('naam', 'clock', 'vramcap', 'gddr'): 
+                                values += '"' + value + '",'  
+                            else:
+                                values += value
+                                values += ','  
+
+                        if values != '':
+                            values = values.rstrip(",")
+                            print(values)
+                            df.inserDataIntoTable(table, 'Naam, Clock, VramCap, GDDR, Stock, Prijs, LeverancierID', values)
+                            return render_template('additem.html', account=account, admin=admin, table=None)
+                    values = ''
+                    return render_template('additem.html', account=account, admin=admin, table=table)
+                
+                case 'ram':
+                    values = ''
+                    if request.method == 'POST':
+                        for key, value in request.form.items(): 
+                            if key in ('naam', 'clock', 'capaciteit'): 
+                                values += '"' + value + '",' 
+                            else:
+                                values += value
+                                values += ','  
+
+                        if values != '':
+                            values = values.rstrip(",")
+                            print(values)
+                            df.inserDataIntoTable(table, 'Naam, Clock, Capaciteit, DDR, Stock, Prijs, LeverancierID', values)
+                            return render_template('additem.html', account=account, admin=admin, table=None)
+                    values = ''
+                    return render_template('additem.html', account=account, admin=admin, table=table)
+                
+                case 'psu':
+                    values = ''
+                    if request.method == 'POST':
+                        for key, value in request.form.items(): 
+                            if key in ('naam'):  
+                                values += '"' + value + '",'  
+                            else:
+                                values += value
+                                values += ','  
+                        if values != '':
+                            values = values.rstrip(",")
+                            print(values)
+                            df.inserDataIntoTable(table, 'Naam, Watt, TypeID, Stock, Prijs, LeverancierID', values)
+                            return render_template('additem.html', account=account, admin=admin, table=None)
+                    values = ''
+                    return render_template('additem.html', account=account, admin=admin, table=table)
+                
+                case 'moederbord':
+                    values = ''
+                    if request.method == 'POST':
+                        for key, value in request.form.items(): 
+                            if key in ('naam', 'socket', 'gddr'): 
+                                values += '"' + value + '",'  
+                            else:
+                                values += value
+                                values += ','  
+
+                        if values != '':
+                            values = values.rstrip(",")
+                            print(values)
+                            df.inserDataIntoTable(table, 'Naam, Socket, DDR, GDDR, Stock, Prijs, LeverancierID', values)
+                            return render_template('additem.html', account=account, admin=admin, table=None)
+                    values = ''
+                    return render_template('additem.html', account=account, admin=admin, table=table)
+
+                case 'opslag':
+                    values = ''
+                    if request.method == 'POST':
+                        for key, value in request.form.items(): 
+                            if key in ('naam', 'capaciteit'):  
+                                values += '"' + value + '",'  
+                            else:
+                                values += value
+                                values += ','  
+
+                        if values != '':
+                            values = values.rstrip(",")
+                            print(values)
+                            df.inserDataIntoTable(table, 'Naam, TypeID, Capaciteit, Stock, Prijs, LeverancierID', values)
+                            return render_template('additem.html', account=account, admin=admin, table=None)
+                    values = ''
+                    return render_template('additem.html', account=account, admin=admin, table=table)
+                
+                case 'behuizing':
+                    values = ''
+                    if request.method == 'POST':
+                        for key, value in request.form.items(): 
+                            if key in ('naam', 'afmetingen'):  
+                                values += '"' + value + '",'  
+                            else:
+                                values += value
+                                values += ','  
+
+                        if values != '':
+                            values = values.rstrip(",")
+                            print(values)
+                            df.inserDataIntoTable(table, 'Naam, AantalFans, Afmetingen, Stock, Prijs, LeverancierID', values)
+                            return render_template('additem.html', account=account, admin=admin, table=None)
+                    values = ''
+                    return render_template('additem.html', account=account, admin=admin, table=table)
+
             return render_template('additem.html', account=account, admin=admin, table=None)
-        else:
-            redirect(url_for('login'))
-    return redirect(url_for('login'))
-
-@app.route('/additem/cpu', methods=['GET', 'POST'])
-def cpu():
-    if 'account' in session:
-        account = session['account']
-        if account['isadmin'] == 1:
-            admin = True
-            table = 'cpu'
-            values = ''
-            if request.method == 'POST':
-                for key, value in request.form.items(): 
-                    if key in ('naam', 'clock', 'socket'): 
-                        values += '"' + value + '",' 
-                    else:
-                        values += value
-                        values += ','  
-
-                if values != '':
-                    values = values.rstrip(",")
-                    print(values)
-                    df.inserDataIntoTable(table, 'Naam, Clock, Cores, Socket, Stock, Prijs, LeverancierID', values)
-                    return render_template('additem.html', account=account, admin=admin, table=None)
-            values = ''
-            return render_template('additem.html', account=account, admin=admin, table=table)
-        else:
-            redirect(url_for('login'))
-    return redirect(url_for('login'))
-
-@app.route('/additem/gpu', methods=['GET', 'POST'])
-def gpu():
-    if 'account' in session:
-        account = session['account']
-        if account['isadmin'] == 1:
-            admin = True
-            table = 'gpu'
-            values = ''
-            if request.method == 'POST':
-                for key, value in request.form.items(): 
-                    if key in ('naam', 'clock', 'vramcap', 'gddr'): 
-                        values += '"' + value + '",'  
-                    else:
-                        values += value
-                        values += ','  
-
-                if values != '':
-                    values = values.rstrip(",")
-                    print(values)
-                    df.inserDataIntoTable(table, 'Naam, Clock, VramCap, GDDR, Stock, Prijs, LeverancierID', values)
-                    return render_template('additem.html', account=account, admin=admin, table=None)
-            values = ''
-            return render_template('additem.html', account=account, admin=admin, table=table)
-        else:
-            redirect(url_for('login'))
-    return redirect(url_for('login'))
-
-@app.route('/additem/ram', methods=['GET', 'POST'])
-def ram():
-    if 'account' in session:
-        account = session['account']
-        if account['isadmin'] == 1:
-            admin = True
-            table = 'ram'
-            if request.method == 'POST':
-                for key, value in request.form.items(): 
-                    if key in ('naam', 'clock', 'capaciteit'): 
-                        values += '"' + value + '",' 
-                    else:
-                        values += value
-                        values += ','  
-
-                if values != '':
-                    values = values.rstrip(",")
-                    print(values)
-                    df.inserDataIntoTable(table, 'Naam, Clock, Capaciteit, DDR, Stock, Prijs, LeverancierID', values)
-                    return render_template('additem.html', account=account, admin=admin, table=None)
-            values = ''
-            return render_template('additem.html', account=account, admin=admin, table=table)
-        else:
-            redirect(url_for('login'))
-    return redirect(url_for('login'))
-
-@app.route('/additem/psu', methods=['GET', 'POST'])
-def psu():
-    if 'account' in session:
-        account = session['account']
-        if account['isadmin'] == 1:
-            admin = True
-            table = 'psu'
-            if request.method == 'POST':
-                for key, value in request.form.items(): 
-                    if key in ('naam'):  
-                        values += '"' + value + '",'  
-                    else:
-                        values += value
-                        values += ','  
-                if values != '':
-                    values = values.rstrip(",")
-                    print(values)
-                    df.inserDataIntoTable(table, 'Naam, Watt, TypeID, Stock, Prijs, LeverancierID', values)
-                    return render_template('additem.html', account=account, admin=admin, table=None)
-            values = ''
-            return render_template('additem.html', account=account, admin=admin, table=table)
-        else:
-            redirect(url_for('login'))
-    return redirect(url_for('login'))
-
-@app.route('/additem/mom', methods=['GET', 'POST'])
-def mom():
-    if 'account' in session:
-        account = session['account']
-        if account['isadmin'] == 1:
-            admin = True
-            table = 'moederbord'
-            if request.method == 'POST':
-                for key, value in request.form.items(): 
-                    if key in ('naam', 'socket', 'gddr'): 
-                        values += '"' + value + '",'  
-                    else:
-                        values += value
-                        values += ','  
-
-                if values != '':
-                    values = values.rstrip(",")
-                    print(values)
-                    df.inserDataIntoTable(table, 'Naam, Socket, DDR, GDDR, Stock, Prijs, LeverancierID', values)
-                    return render_template('additem.html', account=account, admin=admin, table=None)
-            values = ''
-            return render_template('additem.html', account=account, admin=admin, table=table)
-        else:
-            redirect(url_for('login'))
-    return redirect(url_for('login'))
-
-@app.route('/additem/storage', methods=['GET', 'POST'])
-def storage():
-    if 'account' in session:
-        account = session['account']
-        if account['isadmin'] == 1:
-            admin = True
-            table = 'opslag'
-            if request.method == 'POST':
-                for key, value in request.form.items(): 
-                    if key in ('naam', 'capaciteit'):  
-                        values += '"' + value + '",'  
-                    else:
-                        values += value
-                        values += ','  
-
-                if values != '':
-                    values = values.rstrip(",")
-                    print(values)
-                    df.inserDataIntoTable(table, 'Naam, TypeID, Capaciteit, Stock, Prijs, LeverancierID', values)
-                    return render_template('additem.html', account=account, admin=admin, table=None)
-            values = ''
-            return render_template('additem.html', account=account, admin=admin, table=table)
-        else:
-            redirect(url_for('login'))
-    return redirect(url_for('login'))
-
-@app.route('/additem/case', methods=['GET', 'POST'])
-def case():
-    if 'account' in session:
-        account = session['account']
-        if account['isadmin'] == 1:
-            admin = True
-            table = 'behuizing'
-            if request.method == 'POST':
-                for key, value in request.form.items(): 
-                    if key in ('naam', 'afmetingen'):  
-                        values += '"' + value + '",'  
-                    else:
-                        values += value
-                        values += ','  
-
-                if values != '':
-                    values = values.rstrip(",")
-                    print(values)
-                    df.inserDataIntoTable(table, 'Naam, AantalFans, Afmetingen, Stock, Prijs, LeverancierID', values)
-                    return render_template('additem.html', account=account, admin=admin, table=None)
-            values = ''
-            return render_template('additem.html', account=account, admin=admin, table=table)
         else:
             redirect(url_for('login'))
     return redirect(url_for('login'))

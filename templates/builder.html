@@ -8,24 +8,84 @@
 </head>
 
 <body>
-    {% if reviewcart %}
     <topbar>
-    <img src="https://static.vecteezy.com/system/resources/previews/019/787/018/original/shopping-cart-icon-shopping-basket-on-transparent-background-free-png.png" alt="cart" height="40">
+        <div class="top-bar-button">
+            <a href="dashboard" id="dash-button">
+                <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="dashboard" height="30">
+            </a>
+        </div>
+        <div class="top-bar-button">
+            <a href="viewcart" id="cart-button">
+                <img src="https://static.vecteezy.com/system/resources/previews/019/787/018/original/shopping-cart-icon-shopping-basket-on-transparent-background-free-png.png" alt="cart" height="30">
+            </a>
+        </div>
+        <div class="top-bar-button">
+            <a href="login" id="logout-button">
+                <img src="https://cdn0.iconfinder.com/data/icons/login-44/24/logout_doot_interface_essentials_login_regular_f-512.png" alt="log out" height="30">
+            </a>
+        </div>
+        <div class="top-bar-button">
+            <a href="profile" id="profile-button">
+                <img src="https://static-00.iconduck.com/assets.00/profile-icon-512x512-w0uaq4yr.png" alt="profile" height="30">
+            </a>
+        </div>
+        {% if account['isadmin'] == 1%}
+        <div class="top-bar-button">
+            <a href="debug" id="bug-button">
+                <img src="https://static.thenounproject.com/png/83827-200.png" alt="debug" height="30">
+            </a>
+        </div>
+        {% endif %}
     </topbar>
-    {% endif %}
-    {% if reviewcart is not none %}
-    <!-- to be contineud -->
+    <!-- Overlay -->
+    <div class="overlay" id="overlay">
+        <!-- Dialog box -->
+        <div class="dialog-box">
+            <p>Are you sure you want to delete this item?</p>
+            <button id="okButton">OK</button>
+            <button onclick="hideOverlay()">Cancel</button>
+        </div>
+    </div>
+    {% if reviewcart is not none and addtocart is false and buycart is false%}
     <div class="cart-screen">
+        <h2>Your shopping cart</h2>
         {% for item in products %}
-        <li>{{ item }}</li>
+        <li>
+            {{ item }} 
+            <br>
+            <a onclick="showOverlay('{{ item }}')" id="delete-from-cart">Delete</a>
+        </li>
         {% endfor %}
-        <p>Total price: {{ totalprice }}</p>
+        {% if products == () %}
+        <h3>You dont have any products in you shopping cart!</h3>
+        {% endif %}
+        <p>Total price: ${{ totalprice }}</p>
+        {% if products != () %}
         <a href="buy">Buy!</a>
+        {% endif %}
         <a href="builder">Back to builder</a>
         <a href="dashboard">Back to dashboard</a>
     </div>
     {% endif %}
-
+    {% if reviewcart is not none and addtocart is true %}
+    <div class="cart-screen">
+        <h2>Succesfully added these items to your shopping cart:</h2>
+        {% for item in products %}
+        <li>{{ item }}</li>
+        {% endfor %}
+        <p>Total price: ${{ totalprice }}</p>
+        <a href="viewcart">Check out your shopping cart</a>
+        <a href="builder">Back to builder</a>
+        <a href="dashboard">Back to dashboard</a>
+    </div>
+    {% endif %}
+    {% if reviewcart is false and addtocart is false and buycart is true %}
+    <div class="cart-screen">
+        <h2>You Succesfully bought all items for ${{totalprice}}. <br>These will be delivered at {{account['adres']}} on the name {{account['naam']}}</h2>
+        <a href="viewcart">Check out your shopping cart</a>
+        <a href="dashboard">Back to dashboard</a>
+    </div>
+    {% endif %}
 
     {% if reviewcart is none %}
     <div class="product-container">
@@ -136,6 +196,7 @@
             fetch(`/get_options/${component}`)
                 .then(response => response.json())
                 .then(data => {
+                    data.sort((a, b) => a.naam.localeCompare(b.naam));
                     const select = document.getElementById(selectId);
                     // select.innerHTML = ''; // Clear previous options
                     data.forEach(option => {
@@ -311,6 +372,21 @@
             var factor = Math.pow(10, precision);
             return Math.round(number * factor) / factor;
         }
+
+        function showOverlay(item) {
+            var overlay = document.getElementById("overlay");
+            overlay.style.display = "block";
+            var okButton = document.getElementById("okButton");
+                okButton.onclick = function() {
+                    window.location.href = "/delete-item?item=" + item;
+                };
+        }
+
+        function hideOverlay() {
+            var overlay = document.getElementById("overlay");
+            overlay.style.display = "none";
+        }
+
 
         //EVENT LISTENERS
         window.addEventListener('load', function() {

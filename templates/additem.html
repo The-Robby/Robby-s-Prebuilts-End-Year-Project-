@@ -7,17 +7,46 @@
     <title>Items Adder</title>
 </head>
 <body>
+    <topbar>
+        <div class="top-bar-button">
+            <a href="dashboard" id="dash-button">
+                <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="dashboard" height="30">
+            </a>
+        </div>
+        <div class="top-bar-button">
+            <a href="viewcart" id="cart-button">
+                <img src="https://static.vecteezy.com/system/resources/previews/019/787/018/original/shopping-cart-icon-shopping-basket-on-transparent-background-free-png.png" alt="cart" height="30">
+            </a>
+        </div>
+        <div class="top-bar-button">
+            <a href="login" id="logout-button">
+                <img src="https://cdn0.iconfinder.com/data/icons/login-44/24/logout_doot_interface_essentials_login_regular_f-512.png" alt="log out" height="30">
+            </a>
+        </div>
+        <div class="top-bar-button">
+            <a href="profile" id="profile-button">
+                <img src="https://static-00.iconduck.com/assets.00/profile-icon-512x512-w0uaq4yr.png" alt="profile" height="30">
+            </a>
+        </div>
+        {% if account['isadmin'] == 1%}
+        <div class="top-bar-button">
+            <a href="debug" id="bug-button">
+                <img src="https://static.thenounproject.com/png/83827-200.png" alt="debug" height="30">
+            </a>
+        </div>
+        {% endif %}
+    </topbar>
     {% if table is none%}
     <div class="add-container">
         <h1>Which table?</h1>
         <div class="add-item">
-            <a href="additem/cpu">CPU</a>
-            <a href="additem/gpu">GPU</a>
-            <a href="additem/ram">RAM</a>
-            <a href="additem/psu">PSU</a>
-            <a href="additem/mom">Motherboard</a>
-            <a href="additem/storage">Storage</a>
-            <a href="additem/case">Case</a>
+            <a href="additem?table=cpu">CPU</a>
+            <a href="additem?table=gpu">GPU</a>
+            <a href="additem?table=ram">RAM</a>
+            <a href="additem?table=psu">PSU</a>
+            <a href="additem?table=moederbord">Motherboard</a>
+            <a href="additem?table=opslag">Storage</a>
+            <a href="additem?table=behuizing">Case</a>
             <a href="dashboard">Go back to dashboard</a>
         </div>
     </div>
@@ -27,7 +56,7 @@
     <div class="add-container">
         <h2>CPU</h2>
         <div class="add-item">
-            <form action="/additem/cpu" method="post">
+            <form action="/additem?table=cpu" method="post">
                 <label for="naam">Name(str)</label>
                 <input type="text" id="naam" name="naam" required>
 
@@ -62,7 +91,7 @@
         <h2>GPU</h2>
 
         <div class="add-item">
-            <form action="/additem/gpu">
+            <form action="/additem?table=gpu">
                 <label for="naam">Name(str)</label>
                 <input type="text" id="naam" name="naam" required>
 
@@ -97,7 +126,7 @@
         <h2>RAM</h2>
 
         <div class="add-item">
-            <form action="/additem/ram">
+            <form action="/additem?table=ram">
                 <label for="naam">Name(str)</label>
                 <input type="text" id="naam" name="naam" required>
 
@@ -132,7 +161,7 @@
         <h2>PSU</h2>
 
         <div class="add-item">
-            <form action="/additem/psu">
+            <form action="/additem?table=psu">
                 <label for="naam">Name(str)</label>
                 <input type="text" id="naam" name="naam" required>
 
@@ -164,7 +193,7 @@
         <h2>Motherboard</h2>
 
         <div class="add-item">
-            <form action="/additem/mom">
+            <form action="/additem?table=moederbord">
                 <label for="naam">Name(str)</label>
                 <input type="text" id="naam" name="naam" required>
 
@@ -199,7 +228,7 @@
         <h2>Storage</h2>
 
         <div class="add-item">
-            <form action="/additem/storage">
+            <form action="/additem?table=opslag">
                 <label for="naam">Name(str)</label>
                 <input type="text" id="naam" name="naam" required>
 
@@ -231,7 +260,7 @@
         <h2>Case</h2>
 
         <div class="add-item">
-            <form action="/additem/case">
+            <form action="/additem?table=behuizing">
                 <label for="naam">Name(str)</label>
                 <input type="text" id="naam" name="naam" required>
 

@@ -136,7 +136,7 @@ def info_catcher_in_dictionary(table, id=None):
                 str = f''
 
 def make_cart(itemlistdict):
-    list_of_names = [dict['leverancier'] + ' ' + dict['naam'] for dict in itemlistdict]
+    list_of_names = [dict['leverancier'] + ' ' + dict['naam'] + ' $' + str(round(dict['prijs'], 2)) for dict in itemlistdict]
     totalprice = 0
     for dict in itemlistdict:
         totalprice += dict['prijs']
