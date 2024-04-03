@@ -46,47 +46,53 @@
             <button onclick="hideOverlay()">Cancel</button>
         </div>
     </div>
+    
     {% if reviewcart is not none and addtocart is false and buycart is false%}
     <div class="cart-screen">
-        <h2>Your shopping cart</h2>
-        {% for item in products %}
-        <li>
-            {{ item }} 
-            <br>
-            <a onclick="showOverlay('{{ item }}')" id="delete-from-cart">Delete</a>
-        </li>
-        {% endfor %}
-        {% if products == () %}
-        <h3>You dont have any products in you shopping cart!</h3>
-        {% endif %}
-        <p>Total price: ${{ totalprice }}</p>
-        {% if products != () %}
-        <a href="buy">Buy!</a>
-        {% endif %}
-        <a href="builder">Back to builder</a>
-        <a href="dashboard">Back to dashboard</a>
+        <div class="cart-item">
+             <h2>Your shopping cart</h2>
+             {% for item in products %}
+            <li>
+                {{ item }} 
+                <br>
+                <a onclick="showOverlay('{{ item }}')" id="delete-from-cart">Delete</a>
+            </li>
+            {% endfor %}
+            {% if products == () %}
+            <h3>You dont have any products in you shopping cart!</h3>
+            {% endif %}
+            <p>Total price: ${{ totalprice }}</p>
+            {% if products != () %}
+            <a href="buy">Buy!</a>
+            {% endif %}
+            <a href="builder">Back to builder</a>
+            <a href="dashboard">Back to dashboard</a>
+        </div>
     </div>
     {% endif %}
     {% if reviewcart is not none and addtocart is true %}
     <div class="cart-screen">
-        <h2>Succesfully added these items to your shopping cart:</h2>
-        {% for item in products %}
-        <li>{{ item }}</li>
-        {% endfor %}
-        <p>Total price: ${{ totalprice }}</p>
-        <a href="viewcart">Check out your shopping cart</a>
-        <a href="builder">Back to builder</a>
-        <a href="dashboard">Back to dashboard</a>
+        <div class="cart-item">
+            <h2>Succesfully added these items to your shopping cart:</h2>
+            {% for item in products %}
+            <li>{{ item }}</li>
+            {% endfor %}
+            <p>Total price: ${{ totalprice }}</p>
+            <a href="viewcart">Check out your shopping cart</a>
+            <a href="builder">Back to builder</a>
+            <a href="dashboard">Back to dashboard</a>
+        </div>
     </div>
     {% endif %}
     {% if reviewcart is false and addtocart is false and buycart is true %}
     <div class="cart-screen">
-        <h2>You Succesfully bought all items for ${{totalprice}}. <br>These will be delivered at {{account['adres']}} on the name {{account['naam']}}</h2>
-        <a href="viewcart">Check out your shopping cart</a>
-        <a href="dashboard">Back to dashboard</a>
+        <div class="cart-item">
+            <h2>You Succesfully bought all items for ${{totalprice}}. <br>These will be delivered at {{account['adres']}} on the name {{account['naam']}}</h2>
+            <a href="viewcart">Check out your shopping cart</a>
+            <a href="dashboard">Back to dashboard</a>
+        </div>
     </div>
     {% endif %}
-
     {% if reviewcart is none %}
     <div class="product-container">
         <div class="product">
