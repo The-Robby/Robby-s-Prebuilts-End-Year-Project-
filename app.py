@@ -109,13 +109,13 @@ def addtocart():
     if 'account' in session:
         account = session['account']
         if request.method == 'POST':
-            # we create the itemlist to get every possible information about every product inside a structured datatype
+            # we create the itemlist to get every possible information about every product inside a structured datatype (json type)
             itemlist = [df.info_catcher_in_dictionary(item[0],int(item[1])) for item in request.form.items() if item[1] != 'default']
             # now we simplify it for visual purposes
             cartlist = df.make_cart(itemlist)
             # pass the 2 returned values on, first is a list, second is a float
             products = cartlist[0]
-            totalprice = round(cartlist[1], 2)
+            totalprice = cartlist[1]
 
             # we add all the items into the sessions cart
             account['cart'].extend(itemlist)
@@ -142,7 +142,7 @@ def viewcart():
             cartlist = df.make_cart(account['cart'])
             # split the 2 returned values, 1st list, 2nd float
             products = cartlist[0]
-            totalprice = round(cartlist[1], 2)
+            totalprice = cartlist[1]
             return render_template('builder.html', account=account, reviewcart=True, addtocart=False, buycart=False, products=products, totalprice=totalprice)
     return redirect(url_for('login'))
 
@@ -175,20 +175,42 @@ def delete_item():
 def buy():
     if 'account' in session:
         account = session['account']
-        if account['cart'] != []:
-            table = 'user'
-            cartlist = df.make_cart(account['cart'])
-            products = cartlist[0]
-            totalprice = round(cartlist[1],2)
-            moneyspent = df.info_catcher_in_dictionary(table, account['id'])['uitgegeven']
-            if moneyspent is None:
-                moneyspent = 0
-            totalmoneyspent = totalprice + moneyspent
-            account['cart'] = []
-            account['uitgegeven'] = totalmoneyspent
-            session['account'] = account
-            session.modified = True
-            df.update_prebuiltDB(table, f'uitgegeven = {totalmoneyspent}', f'userid = {account['id']}')
+        if account['cart'] != []: # cant buy an empty cart
+            # ---------------------------variables----------------------------------------------------------------------------------------------#
+            table = 'user'  # table will always be user                                                                                         #
+            cart = account['cart']  # get the sessions car in a local variable for readability                                                  #
+            cartlist = df.make_cart(cart)  # get cartlist for visual purposes                                                                   #
+            products = cartlist[0]                                                                                                              #
+            totalprice = round(cartlist[1],2)                                                                                                   #
+            moneyspent = df.info_catcher_in_dictionary(table, account['id'])['uitgegeven']  # get the users already spent money from database   #
+            # ----------------------------------------------------------------------------------------------------------------------------------#
+
+            # ----------------cant add a NoneType so we make it an int------------------#
+            if moneyspent is None:                                                      #
+                moneyspent = 0                                                          #
+            # --------------------------------------------------------------------------#
+                
+            totalmoneyspent = totalprice + moneyspent  # get the total price value in int
+            account['cart'] = []  # empty the cart
+            account['uitgegeven'] = totalmoneyspent  # update users total money spent in local variable of the session
+
+            # -------------update session---------------#
+            session['account'] = account                #
+            session.modified = True                     #
+            # ------------------------------------------#
+
+            #------------------update database--------------------------------------------------------------------------------------------------------------#
+            df.update_prebuiltDB(table, f'uitgegeven = {totalmoneyspent}', f'userid = {account['id']}')  # update the databases user total money spent      #
+            idlist = [(id['id'], id['table']) for id in cart]  # finally declare a list of id's and table names to update stock                             #
+            if idlist != []:                                                                                                                                #
+                for id, idtable in idlist:   # ittirate over the list                                                                                       #
+                    # ----------------update stock values with one less then before---------------#                                                         #
+                    if idtable == 'moederbord':                                                   #                                                         #
+                        df.update_prebuiltDB(idtable, 'stock = stock - 1', f'momid = {id}')       #                                                         #
+                    else:                                                                         #                                                         #
+                        df.update_prebuiltDB(idtable, 'stock = stock - 1', f'{idtable}id = {id}') #                                                         #
+                    # ----------------------------------------------------------------------------#                                                         #
+            #-----------------------------------------------------------------------------------------------------------------------------------------------#
     return render_template("builder.html", account=account, reviewcart=False, addtocart=False, buycart=True, products=products, totalprice=totalprice)
 
 #------------------------------------------------------------------------------------------DEBUG.HTML----------------------------------------------------------------------------------
@@ -197,24 +219,31 @@ def debug():
     if 'account' in session:
         account = session['account']
         if account['isadmin'] == 1:
+            # declare variable from url argument
             table = request.args.get('table')
-            items = df.getDataFromTable(table)
+            # ittirate over every entity in any database.table or session to view any info
+            if table == 'session':
+                items = [(key, value) for key, value in account.items()]
+            else:
+                items = df.getDataFromTable(table)
         else:
             return redirect(url_for('login'))
     return render_template("debug.html", account=account, table=table, items=items)
 
-#------------------------------------------------------------------------------------------DEBUG.HTML----------------------------------------------------------------------------------
+#------------------------------------------------------------------------------------------PROFILE.HTML----------------------------------------------------------------------------------
 @app.route("/profile")
 def profile():
     if 'account' in session:
-        account = session['account']
-        adres = account['adres']
-        username = account['gebruikersnaam']
-        name = account['naam']
-        spent = account['uitgegeven']
-
+        # -----------------variables--------------------#
+        account = session['account']                    #
+        adres = account['adres']                        #
+        username = account['gebruikersnaam']            #
+        name = account['naam']                          #
+        spent = account['uitgegeven']                   #
+        # ----------------------------------------------#
     else:
         return redirect(url_for('login'))
+    # simply return all defined values from the users session to view basic info
     return render_template("profile-info.html", account=account, adres=adres, username=username, name=name, spent=spent)
 
 # -----------------------------------------------------------------------------------------ADDITEM.HTML--------------------------------------------------------------------------------
@@ -227,32 +256,33 @@ def additem():
             admin = True
             # get the specified table and show options accordingly
             table = request.args.get('table')
-            match table:
+            print(table)
+            match table:  # pythons match statement similair to c/c++/c# switch statement
                 case 'cpu':
-                    # initialize values string for sql querry
-                    values = ''
+                    values = ''  # initialize 'values' string for sql querry
                     if request.method == 'POST':
-                        # distinguish all types
-                        for key, value in request.form.items(): 
-                            # distinguish all strings
-                            if key in ('naam', 'clock', 'socket'): 
-                                values += '"' + value + '",' 
-                            # distinguish all numeric values
-                            else:
-                                values += value
-                                values += ','  
+                        # distinguish all types-------------------------#
+                        for key, value in request.form.items():         #
+                            # distinguish all strings---------------#   #
+                            if key in ('naam', 'clock', 'socket'):  #   #
+                                values += '"' + value + '",'        #   #
+                            #---------------------------------------#   #
+                            # distinguish all numeric values----#       #
+                            else:                               #       #
+                                values += value                 #       #
+                                values += ','                   #       #
+                            #-----------------------------------#       #
+                        #-----------------------------------------------#
                         # if string is empty abort to exclude errors
                         if values != '':
-                            values = values.rstrip(",")
-                            print(values)
-                            # add the values string to the querry
-                            df.inserDataIntoTable(table, 'Naam, Clock, Cores, Socket, Stock, Prijs, LeverancierID', values)
+                            values = values.rstrip(",")  # strip the last comma to avoid errors
+                            df.inserDataIntoTable(table, 'Naam, Clock, Cores, Socket, Stock, Prijs, LeverancierID', values)  # add the 'values' string to the querry
                             return render_template('additem.html', account=account, admin=admin, table=None)
-                    # clear the string to exclude eny further errors
-                    values = ''
+                    values = ''  # clear the string to exclude eny further errors
                     return render_template('additem.html', account=account, admin=admin, table=table)
                 #  rinse and repeat
                 case 'gpu':
+                    print('gpu')
                     values = ''
                     if request.method == 'POST':
                         for key, value in request.form.items(): 
@@ -261,12 +291,10 @@ def additem():
                             else:
                                 values += value
                                 values += ','  
-
                         if values != '':
                             values = values.rstrip(",")
-                            print(values)
                             df.inserDataIntoTable(table, 'Naam, Clock, VramCap, GDDR, Stock, Prijs, LeverancierID', values)
-                            return render_template('additem.html', account=account, admin=admin, table=None)
+                            return redirect(url_for('additem'))
                     values = ''
                     return render_template('additem.html', account=account, admin=admin, table=table)
                 
@@ -282,7 +310,6 @@ def additem():
 
                         if values != '':
                             values = values.rstrip(",")
-                            print(values)
                             df.inserDataIntoTable(table, 'Naam, Clock, Capaciteit, DDR, Stock, Prijs, LeverancierID', values)
                             return render_template('additem.html', account=account, admin=admin, table=None)
                     values = ''
@@ -299,7 +326,6 @@ def additem():
                                 values += ','  
                         if values != '':
                             values = values.rstrip(",")
-                            print(values)
                             df.inserDataIntoTable(table, 'Naam, Watt, TypeID, Stock, Prijs, LeverancierID', values)
                             return render_template('additem.html', account=account, admin=admin, table=None)
                     values = ''
@@ -317,7 +343,6 @@ def additem():
 
                         if values != '':
                             values = values.rstrip(",")
-                            print(values)
                             df.inserDataIntoTable(table, 'Naam, Socket, DDR, GDDR, Stock, Prijs, LeverancierID', values)
                             return render_template('additem.html', account=account, admin=admin, table=None)
                     values = ''
@@ -335,7 +360,6 @@ def additem():
 
                         if values != '':
                             values = values.rstrip(",")
-                            print(values)
                             df.inserDataIntoTable(table, 'Naam, TypeID, Capaciteit, Stock, Prijs, LeverancierID', values)
                             return render_template('additem.html', account=account, admin=admin, table=None)
                     values = ''
@@ -353,7 +377,6 @@ def additem():
 
                         if values != '':
                             values = values.rstrip(",")
-                            print(values)
                             df.inserDataIntoTable(table, 'Naam, AantalFans, Afmetingen, Stock, Prijs, LeverancierID', values)
                             return render_template('additem.html', account=account, admin=admin, table=None)
                     values = ''

@@ -258,7 +258,7 @@ a:hover {
     flex-wrap: wrap;
     justify-content: center;
     flex-direction: column;
-    text-align: center;
+    text-align: left;
     align-items: center;
     
     background-color: transparent;

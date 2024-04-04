@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `prebuiltdb` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `prebuiltdb`;
 -- MySQL dump 10.13  Distrib 8.0.36, for Win64 (x86_64)
 --
 -- Host: localhost    Database: prebuiltdb
@@ -74,7 +76,7 @@ CREATE TABLE `cpu` (
 
 LOCK TABLES `cpu` WRITE;
 /*!40000 ALTER TABLE `cpu` DISABLE KEYS */;
-INSERT INTO `cpu` VALUES (1,'i9-13900K','5,2GHz',24,'1700',5,675.95,2),(2,'i9-14900K','6,0GHz',24,'1700',9,639,2),(3,'i7-14700K','5,6GHz',20,'1700',0,459,2);
+INSERT INTO `cpu` VALUES (1,'i9-13900K','5,2GHz',24,'1700',5,675.95,2),(2,'i9-14900K','6,0GHz',24,'1700',9,639,2),(3,'i7-14700K','5,6 GHz',20,'1700',0,459,2);
 /*!40000 ALTER TABLE `cpu` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -97,7 +99,7 @@ CREATE TABLE `gpu` (
   PRIMARY KEY (`GPUID`),
   KEY `LevInGpu_idx` (`LeverancierID`),
   CONSTRAINT `LevInGpu` FOREIGN KEY (`LeverancierID`) REFERENCES `leverancier` (`LeverancierID`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -106,7 +108,7 @@ CREATE TABLE `gpu` (
 
 LOCK TABLES `gpu` WRITE;
 /*!40000 ALTER TABLE `gpu` DISABLE KEYS */;
-INSERT INTO `gpu` VALUES (1,'Nvidia GeForce RTX 4080','2535MHz','16GB','6X',1,1479,3);
+INSERT INTO `gpu` VALUES (1,'Nvidia GeForce RTX 4080','2535 MHz','16GB','6X',1,1479,3),(2,'Arc A770 CL 16GO','2150 MHz','16GB','6',68,420.99,2);
 /*!40000 ALTER TABLE `gpu` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -358,7 +360,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (18,'admin','a15a80a3d51b2d4fef427803191341bee161377dc63242b305414bdeb079b72b','Admin','AdminStreet',NULL,1,'9²tÂ»üÅ:N\'\Z÷ÈzxÜmèc°Þ'),(19,'robbyvgaming','7a0c62479b7264d99d400181518afca60cb2d1a874a63caaf8e07c15f58b5750','Robbert Groffi','Halingenstraat 32, Velm 3806',NULL,0,']TzK×Y2^è¼mÄ	¦õg»Ô²ÖÔY¶'),(20,'victoria','45027579fbb86c7982ca78d43667ef3c7f0c7818410ff8abb10af20a4ea1f745','Victoria Crauwels','Neger is de poepstraat 32',NULL,0,'¸hÞñÙÄµÈ9%kø¥Ëçz&/¶Ã\0äg%N');
+INSERT INTO `user` VALUES (18,'admin','a15a80a3d51b2d4fef427803191341bee161377dc63242b305414bdeb079b72b','Admin','AdminStreet',28884.9,1,'9²tÂ»üÅ:N\'\Z÷ÈzxÜmèc°Þ'),(19,'robbyvgaming','7a0c62479b7264d99d400181518afca60cb2d1a874a63caaf8e07c15f58b5750','Robbert Groffi','Halingenstraat 32, Velm 3806',918,0,']TzK×Y2^è¼mÄ	¦õg»Ô²ÖÔY¶'),(20,'victoria','45027579fbb86c7982ca78d43667ef3c7f0c7818410ff8abb10af20a4ea1f745','Victoria Crauwels','Neger is de poepstraat 32',NULL,0,'¸hÞñÙÄµÈ9%kø¥Ëçz&/¶Ã\0äg%N');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -371,4 +373,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-02 18:06:34
+-- Dump completed on 2024-04-04  4:30:10
