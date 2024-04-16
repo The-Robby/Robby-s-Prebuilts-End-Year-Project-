@@ -80,11 +80,20 @@ def register():
 def dashboard():
     if 'account' in session:
         account = session['account']
-        admin = False
-        # render dashboard based on admin or not
-        if account['isadmin'] == 1:
-            admin = True
-        return render_template('dashboard.html', account=account, admin=admin)
+        admin = False # initialize admin variable
+        # Create list of strings from the database to fill dashboard----#
+        prebuiltlist = df.getDataFromTable('prebuilt')                  #
+        prebuilt = df.prebuilt_name_converter(prebuiltlist)             #
+        #---------------------------------------------------------------#
+        #debug------------------#
+        print(prebuiltlist)     #
+        print(prebuilt)         #
+        #-----------------------#
+        # render dashboard based on admin or not----------------------------------------------------#
+        if account['isadmin'] == 1:                                                                 #
+            admin = True                                                                            #
+        return render_template('dashboard.html', account=account, admin=admin, prebuilt=prebuilt)   #
+        # ------------------------------------------------------------------------------------------#
     return redirect(url_for('login'))
 
 # -----------------------------------------------------------------------------------------BUILDER.HTML--------------------------------------------------------------------------------
@@ -127,6 +136,29 @@ def addtocart():
         else:
             return redirect(url_for('login'))
     return redirect(url_for('login'))
+
+@app.route('/addtocartfromdash/<prebuilt>', methods = ['GET','POST'])
+def addtocartfromdash(prebuilt):
+    if 'account' in session:
+        account = session['account']
+        print(prebuilt)
+        itemlist = [df.info_catcher_in_dictionary(item[0],int(item[1])) for item in df.prebuilt_name_converter(prebuilt, buy='buy').items()]
+        # now we simplify it for visual purposes
+        cartlist = df.make_cart(itemlist)
+        # pass the 2 returned values on, first is a list, second is a float
+        products = cartlist[0]
+        totalprice = cartlist[1]
+
+        # we add all the items into the sessions cart
+        account['cart'].extend(itemlist)
+        # update the session 
+        session.modified = True  
+        # we pass this variable to ensure we get the right html layout
+        addtocart = True
+        return render_template('builder.html', account=account, addtocart=addtocart, products=products, totalprice=totalprice)
+
+    return redirect(url_for('login'))
+    
 
 @app.route('/viewcart', methods=['GET', 'POST'])
 def viewcart():
@@ -200,7 +232,7 @@ def buy():
             # ------------------------------------------#
 
             #------------------update database--------------------------------------------------------------------------------------------------------------#
-            df.update_prebuiltDB(table, f'uitgegeven = {totalmoneyspent}', f'userid = {account['id']}')  # update the databases user total money spent      #
+            df.update_prebuiltDB(table, f'uitgegeven = {totalmoneyspent}', f'userid = {account["id"]}')  # update the databases user total money spent      #
             idlist = [(id['id'], id['table']) for id in cart]  # finally declare a list of id's and table names to update stock                             #
             if idlist != []:                                                                                                                                #
                 for id, idtable in idlist:   # ittirate over the list                                                                                       #

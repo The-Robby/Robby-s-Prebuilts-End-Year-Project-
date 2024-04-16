@@ -65,16 +65,28 @@ def update_prebuiltDB(table, set_updated_values, set_conditions):
         print("Error while connecting to MySQL", e)
 
 def get_foreign_key_name(table, fk):
-    try:
-        conn = msql.connect(**dbDic)
-        if conn.is_connected():
-            cursor = conn.cursor()
-            sql = f'''SELECT naam FROM {table} WHERE {table}id = {fk}'''
-            cursor.execute(sql)
-            result = cursor.fetchall()
-            return result[0][0]
-    except Error as e:
-        print("Error while connecting to MySQL", e)
+    if table != 'moederbord':
+        try:
+            conn = msql.connect(**dbDic)
+            if conn.is_connected():
+                cursor = conn.cursor()
+                sql = f'''SELECT naam FROM {table} WHERE {table}id = {fk}'''
+                cursor.execute(sql)
+                result = cursor.fetchall()
+                return result[0][0]
+        except Error as e:
+            print("Error while connecting to MySQL", e)
+    else:
+        try:
+            conn = msql.connect(**dbDic)
+            if conn.is_connected():
+                cursor = conn.cursor()
+                sql = f'''SELECT naam FROM {table} WHERE momid = {fk}'''
+                cursor.execute(sql)
+                result = cursor.fetchall()
+                return result[0][0]
+        except Error as e:
+            print("Error while connecting to MySQL", e)
 
 def info_catcher_in_dictionary(table, id=None):
     result = getDataFromTable(table)
@@ -141,6 +153,80 @@ def make_cart(itemlistdict):
     for dict in itemlistdict:
         totalprice += dict['prijs']
     return list_of_names, round(totalprice, 2)
+
+def prebuilt_name_converter(prebuiltlist, buy=None):
+    if buy == None or buy != 'buy':
+        newlist = []
+        for tup in prebuiltlist:
+            tuplelist = []
+            for i in range(len(tup)):
+                if len(tup) <= 9:
+                    match i:
+                        case 0:
+                            tuplelist.append(get_prebuilt_price(tup[i]))
+                        case 1:   
+                            name = get_foreign_key_name('behuizing', tup[i])
+                            tuplelist.append(name)
+                        case 2:   
+                            name = get_foreign_key_name('opslag', tup[i])
+                            tuplelist.append(name)
+                        case 3:   
+                            name = get_foreign_key_name('cpu', tup[i])
+                            tuplelist.append(name)
+                        case 4:   
+                            name = get_foreign_key_name('gpu', tup[i])
+                            tuplelist.append(name)
+                        case 5:   
+                            info = info_catcher_in_dictionary('ram', tup[i])
+                            string = info['leverancier'] + ' ' + info['naam'] + ' ' + info['clock']
+                            tuplelist.append(f'{string}')
+                        case 6:   
+                            name = get_foreign_key_name('psu', tup[i])
+                            tuplelist.append(name)
+                        case 7:   
+                            name = get_foreign_key_name('moederbord', tup[i])
+                            tuplelist.append(name)
+                        case 8:
+                            tuplelist.append(tup[i])   
+                        case _:
+                            raise ValueError("Item index cannot be empty")
+                else:
+                    raise ValueError("Tuple is wrong length, check if the correct tuple was given")
+            idlist = list(tup)
+            idlist.pop(0)
+            idlist.pop(7)
+            tuplelist.append(idlist)
+            newlist.append(tuple(tuplelist))
+        return newlist
+    elif buy == 'buy':
+        newlist = []
+        for item in range(len(prebuiltlist)):
+            match item:
+                case 0:   
+                    name = ('behuizing', prebuiltlist[item])
+                    newlist.append(name)
+                case 1:   
+                    name = ('opslag', prebuiltlist[item])
+                    newlist.append(name)
+                case 2:   
+                    name = ('cpu', prebuiltlist[item])
+                    newlist.append(name)
+                case 3:   
+                    name = ('gpu', prebuiltlist[item])
+                    newlist.append(name)
+                case 4:   
+                    name = ('ram', prebuiltlist[item])
+                    newlist.append(name)
+                case 5:   
+                    name = ('psu', prebuiltlist[item])
+                    newlist.append(name)
+                case 6:   
+                    name = ('moederbord', prebuiltlist[item])
+                    newlist.append(name)
+                case _:
+                    raise ValueError(f"Item index cannot be empty, errors in this list: {prebuiltlist}")
+        return newlist
+
 
 
 components = {
