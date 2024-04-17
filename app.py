@@ -81,6 +81,10 @@ def dashboard():
     if 'account' in session:
         account = session['account']
         admin = False # initialize admin variable
+        #Get the image url from database to display with the prebuilt-----------------------------------------------------------------------------------------------------------------------#
+        #behuizing = [df.info_catcher_in_dictionary(item[0],int(item[1])) for item in df.prebuilt_name_converter(df.string_to_int_list(prebuilt), buy='buy') if item[0] == "behuizing"]      #
+        #image_url = behuizing[7]                                                                                                                                                            #
+        #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
         # Create list of strings from the database to fill dashboard----#
         prebuiltlist = df.getDataFromTable('prebuilt')                  #
         prebuilt = df.prebuilt_name_converter(prebuiltlist)             #
@@ -141,8 +145,7 @@ def addtocart():
 def addtocartfromdash(prebuilt):
     if 'account' in session:
         account = session['account']
-        print(prebuilt)
-        itemlist = [df.info_catcher_in_dictionary(item[0],int(item[1])) for item in df.prebuilt_name_converter(prebuilt, buy='buy').items()]
+        itemlist = [df.info_catcher_in_dictionary(item[0],int(item[1])) for item in df.prebuilt_name_converter(df.string_to_int_list(prebuilt), buy='buy')]
         # now we simplify it for visual purposes
         cartlist = df.make_cart(itemlist)
         # pass the 2 returned values on, first is a list, second is a float

@@ -1,10 +1,10 @@
 CREATE DATABASE  IF NOT EXISTS `prebuiltdb` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `prebuiltdb`;
--- MySQL dump 10.13  Distrib 8.0.36, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
 --
 -- Host: localhost    Database: prebuiltdb
 -- ------------------------------------------------------
--- Server version	8.0.36
+-- Server version	8.0.35
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -32,6 +32,7 @@ CREATE TABLE `behuizing` (
   `Stock` int DEFAULT NULL,
   `Prijs` float DEFAULT NULL,
   `LeverancierID` int DEFAULT NULL,
+  `fotolink` varchar(2048) DEFAULT NULL,
   PRIMARY KEY (`BehuizingID`),
   KEY `LeverancierID_idx` (`LeverancierID`),
   CONSTRAINT `LeverancierID` FOREIGN KEY (`LeverancierID`) REFERENCES `leverancier` (`LeverancierID`)
@@ -44,7 +45,7 @@ CREATE TABLE `behuizing` (
 
 LOCK TABLES `behuizing` WRITE;
 /*!40000 ALTER TABLE `behuizing` DISABLE KEYS */;
-INSERT INTO `behuizing` VALUES (1,'Big Tower',4,'100x100x40',2,149.99,1);
+INSERT INTO `behuizing` VALUES (1,'Obsidian 1000D',4,'100x100x40',-4,149.99,1,'https://tweakers.net/i/T_ExRH7dyARulcwakGjwRJsqHPs=/fit-in/656x/filters:strip_exif()/i/2001967595.png?f=imagenormal');
 /*!40000 ALTER TABLE `behuizing` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -64,6 +65,7 @@ CREATE TABLE `cpu` (
   `Stock` int DEFAULT NULL,
   `Prijs` float DEFAULT NULL,
   `LeverancierID` int DEFAULT NULL,
+  `fotolink` varchar(2048) DEFAULT NULL,
   PRIMARY KEY (`CPUID`),
   KEY `LevInCpu_idx` (`LeverancierID`),
   CONSTRAINT `LevInCpu` FOREIGN KEY (`LeverancierID`) REFERENCES `leverancier` (`LeverancierID`)
@@ -76,7 +78,7 @@ CREATE TABLE `cpu` (
 
 LOCK TABLES `cpu` WRITE;
 /*!40000 ALTER TABLE `cpu` DISABLE KEYS */;
-INSERT INTO `cpu` VALUES (1,'i9-13900K','5,2GHz',24,'1700',5,675.95,2),(2,'i9-14900K','6,0GHz',24,'1700',9,639,2),(3,'i7-14700K','5,6 GHz',20,'1700',0,459,2);
+INSERT INTO `cpu` VALUES (1,'i9-13900K','5,2GHz',24,'1700',-2,675.95,2,'https://www.alternate.be/p/600x600/7/7/Intel__Core_i9_13900K__3_0_GHz__5_8_GHz_Turbo_Boost__socket_1700_processor@@1865277.jpg'),(2,'i9-14900K','6,0GHz',24,'1700',9,639,2,'https://azerty.nl/media/catalog/product/0/o/0okyo5.5283778_15fb3ae0fc9358f026631170abc11d0a-43235351_1.jpg?quality=80&bg-color=255,255,255&fit=bounds&height=700&width=700&canvas=700:700'),(3,'i7-14700K','5,6 GHz',20,'1700',0,459,2,'https://www.alternate.be/p/600x600/5/7/Intel__Core_i7_14700K__3_4_GHz__5_6_GHz_Turbo_Boost__socket_1700_processor@@100009775.jpg');
 /*!40000 ALTER TABLE `cpu` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -96,6 +98,7 @@ CREATE TABLE `gpu` (
   `Stock` int DEFAULT NULL,
   `Prijs` float DEFAULT NULL,
   `LeverancierID` int DEFAULT NULL,
+  `fotolink` varchar(2048) DEFAULT NULL,
   PRIMARY KEY (`GPUID`),
   KEY `LevInGpu_idx` (`LeverancierID`),
   CONSTRAINT `LevInGpu` FOREIGN KEY (`LeverancierID`) REFERENCES `leverancier` (`LeverancierID`)
@@ -108,7 +111,7 @@ CREATE TABLE `gpu` (
 
 LOCK TABLES `gpu` WRITE;
 /*!40000 ALTER TABLE `gpu` DISABLE KEYS */;
-INSERT INTO `gpu` VALUES (1,'Nvidia GeForce RTX 4080','2535 MHz','16GB','6X',1,1479,3),(2,'Arc A770 CL 16GO','2150 MHz','16GB','6',68,420.99,2);
+INSERT INTO `gpu` VALUES (1,'Nvidia GeForce RTX 4080','2535 MHz','16GB','6X',-5,1479,3,'https://m.media-amazon.com/images/I/71iaKN6nNrL.jpg'),(2,'Arc A770 CL 16GO','2150 MHz','16GB','6',67,420.99,2,'https://i5.walmartimages.com/asr/84688cb7-74a7-40bf-bc4f-cdbd24cac60d.257b6e8a5ce7d167aa328396039a02d8.jpeg?odnHeight=768&odnWidth=768&odnBg=FFFFFF');
 /*!40000 ALTER TABLE `gpu` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -152,6 +155,7 @@ CREATE TABLE `moederbord` (
   `Stock` int DEFAULT NULL,
   `Prijs` float DEFAULT NULL,
   `LeverancierID` int DEFAULT NULL,
+  `fotolink` varchar(2048) DEFAULT NULL,
   PRIMARY KEY (`MomID`),
   KEY `LevInMom_idx` (`LeverancierID`),
   CONSTRAINT `LevInMom` FOREIGN KEY (`LeverancierID`) REFERENCES `leverancier` (`LeverancierID`)
@@ -164,7 +168,7 @@ CREATE TABLE `moederbord` (
 
 LOCK TABLES `moederbord` WRITE;
 /*!40000 ALTER TABLE `moederbord` DISABLE KEYS */;
-INSERT INTO `moederbord` VALUES (1,'ROG STRIX B760-F GAMING','1700',5,'6X',8,269,4);
+INSERT INTO `moederbord` VALUES (1,'ROG STRIX B760-F GAMING','1700',5,'6X',2,269,4,'https://media.ldlc.com/r1600/ld/products/00/06/00/31/LD0006003137.jpg');
 /*!40000 ALTER TABLE `moederbord` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -183,6 +187,7 @@ CREATE TABLE `opslag` (
   `Stock` int DEFAULT NULL,
   `Prijs` float DEFAULT NULL,
   `LeverancierID` int DEFAULT NULL,
+  `fotolink` varchar(2048) DEFAULT NULL,
   PRIMARY KEY (`OpslagID`),
   KEY `TypeID_idx` (`TypeID`),
   KEY `LeverancierIDinOpslag_idx` (`LeverancierID`),
@@ -197,7 +202,7 @@ CREATE TABLE `opslag` (
 
 LOCK TABLES `opslag` WRITE;
 /*!40000 ALTER TABLE `opslag` DISABLE KEYS */;
-INSERT INTO `opslag` VALUES (1,'990 Pro',1,'2TB',4,190,5);
+INSERT INTO `opslag` VALUES (1,'990 Pro',1,'2TB',-2,190,5,'https://images.samsung.com/is/image/samsung/p6pim/be/mz-v9p2t0bw/gallery/be-990pro-nvme-m2-ssd-mz-v9p2t0bw-533691431?$650_519_PNG$');
 /*!40000 ALTER TABLE `opslag` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -217,6 +222,7 @@ CREATE TABLE `prebuilt` (
   `RAMID` int DEFAULT NULL,
   `PSUID` int DEFAULT NULL,
   `MomID` int DEFAULT NULL,
+  `Name` varchar(400) DEFAULT NULL,
   PRIMARY KEY (`PrebuiltID`),
   KEY `psuid_idx` (`PSUID`),
   KEY `ramid_idx` (`RAMID`),
@@ -241,7 +247,7 @@ CREATE TABLE `prebuilt` (
 
 LOCK TABLES `prebuilt` WRITE;
 /*!40000 ALTER TABLE `prebuilt` DISABLE KEYS */;
-INSERT INTO `prebuilt` VALUES (1,1,1,1,1,2,1,1);
+INSERT INTO `prebuilt` VALUES (1,1,1,1,1,2,1,1,'Robby\'s Prebuilt');
 /*!40000 ALTER TABLE `prebuilt` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -260,6 +266,7 @@ CREATE TABLE `psu` (
   `Stock` int DEFAULT NULL,
   `Prijs` float DEFAULT NULL,
   `LeverancierID` int DEFAULT NULL,
+  `fotolink` varchar(2048) DEFAULT NULL,
   PRIMARY KEY (`PSUID`),
   KEY `LevInPsu_idx` (`LeverancierID`),
   KEY `TypInPsu_idx` (`TypeID`),
@@ -274,7 +281,7 @@ CREATE TABLE `psu` (
 
 LOCK TABLES `psu` WRITE;
 /*!40000 ALTER TABLE `psu` DISABLE KEYS */;
-INSERT INTO `psu` VALUES (1,'RM1000e V2 PSU',1000,2,4,144.9,1);
+INSERT INTO `psu` VALUES (1,'RM1000e V2 PSU',1000,2,-2,144.9,1,'https://cdn.webshopapp.com/shops/330902/files/447022154/1500x1500x2/corsair-corsair-rm1000e-v2-psu-pc-voeding.jpg');
 /*!40000 ALTER TABLE `psu` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -294,6 +301,7 @@ CREATE TABLE `ram` (
   `Stock` int DEFAULT NULL,
   `Prijs` float DEFAULT NULL,
   `LeverancierID` int DEFAULT NULL,
+  `fotolink` varchar(2048) DEFAULT NULL,
   PRIMARY KEY (`RAMID`),
   KEY `LevInRam_idx` (`LeverancierID`),
   CONSTRAINT `LevInRam` FOREIGN KEY (`LeverancierID`) REFERENCES `leverancier` (`LeverancierID`)
@@ -306,7 +314,7 @@ CREATE TABLE `ram` (
 
 LOCK TABLES `ram` WRITE;
 /*!40000 ALTER TABLE `ram` DISABLE KEYS */;
-INSERT INTO `ram` VALUES (1,'Vengeance','4000MHz','16GB',4,3,99.8,1),(2,'Vengeance','6800MHz','32GB',5,7,152.9,1);
+INSERT INTO `ram` VALUES (1,'Vengeance','4000MHz','16GB',4,3,99.8,1,'https://www.bytesatwork.be/media/catalog/product/cache/926ec4834e42ffe6a495cf71ebadeb46/1/2/1299153_3_6.jpg'),(2,'Vengeance','6800MHz','32GB',5,1,152.9,1,'https://assets.corsair.com/image/upload/c_pad,q_auto,h_1024,w_1024,f_auto/products/Memory/vengeance-ddr5-blk-config/Gallery/VENGEANCE_DDR5_BLK_01_2up.webp');
 /*!40000 ALTER TABLE `ram` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -360,7 +368,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (18,'admin','a15a80a3d51b2d4fef427803191341bee161377dc63242b305414bdeb079b72b','Admin','AdminStreet',28884.9,1,'9²tÂ»üÅ:N\'\Z÷ÈzxÜmèc°Þ'),(19,'robbyvgaming','7a0c62479b7264d99d400181518afca60cb2d1a874a63caaf8e07c15f58b5750','Robbert Groffi','Halingenstraat 32, Velm 3806',918,0,']TzK×Y2^è¼mÄ	¦õg»Ô²ÖÔY¶'),(20,'victoria','45027579fbb86c7982ca78d43667ef3c7f0c7818410ff8abb10af20a4ea1f745','Victoria Crauwels','Neger is de poepstraat 32',NULL,0,'¸hÞñÙÄµÈ9%kø¥Ëçz&/¶Ã\0äg%N');
+INSERT INTO `user` VALUES (18,'admin','a15a80a3d51b2d4fef427803191341bee161377dc63242b305414bdeb079b72b','Admin','AdminStreet',48352.2,1,'9²tÂ»üÅ:N\'\Z÷ÈzxÜmèc°Þ'),(19,'robbyvgaming','7a0c62479b7264d99d400181518afca60cb2d1a874a63caaf8e07c15f58b5750','Robbert Groffi','Halingenstraat 32, Velm 3806',918,0,']TzK×Y2^è¼mÄ	¦õg»Ô²ÖÔY¶'),(20,'victoria','45027579fbb86c7982ca78d43667ef3c7f0c7818410ff8abb10af20a4ea1f745','Victoria Crauwels','Neger is de poepstraat 32',NULL,0,'¸hÞñÙÄµÈ9%kø¥Ëçz&/¶Ã\0äg%N');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -373,4 +381,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-04  4:30:10
+-- Dump completed on 2024-04-17 21:53:44

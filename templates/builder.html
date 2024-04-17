@@ -78,9 +78,9 @@
             <li>{{ item }}</li>
             {% endfor %}
             <p>Total price: ${{ totalprice }}</p>
-            <a href="viewcart">Check out your shopping cart</a>
-            <a href="builder">Back to builder</a>
-            <a href="dashboard">Back to dashboard</a>
+            <a href="/viewcart">Check out your shopping cart</a>
+            <a href="/builder">Back to builder</a>
+            <a href="/dashboard">Back to dashboard</a>
         </div>
     </div>
     {% endif %}
@@ -175,8 +175,7 @@
             
         </form>
         <button type="submit" id="cart">Add to Cart</button>
-        <a href="dashboard">Back</a>
-        <a href="logout">Log Out</a>
+        <a href="/dashboard">Back</a>
     </div>
     {% endif %}
 
@@ -228,6 +227,7 @@
                         optionElem.setAttribute('data-socket', option.socket);
                         optionElem.setAttribute('data-cores', option.cores);
                         optionElem.setAttribute('data-afmetingen', option.afmetingen);
+                        optionElem.setAttribute('data-image', option.fotolink);
                         select.appendChild(optionElem);
                     });
                     // Update info element with the price of the first option
@@ -255,32 +255,49 @@
                 var leverancier = selectedOption.getAttribute('data-leverancier');
                 var clock = selectedOption.getAttribute('data-clock');
                 var stock = selectedOption.getAttribute('data-stock');
-                stock = checkstock(stock)
+                stock = checkstock(stock);
+                var image = selectedOption.getAttribute('data-image'); // Assuming this attribute contains the image URL
 
-                document.getElementById('ram-info').innerText = 'Brand: ' + leverancier +
-                                                                '\nClock speed: ' + clock +
-                                                                '\nCapacity: ' + capaciteit + 
-                                                                '\nDDR' + ddr + 
-                                                                '\n\n\n\n\n\n' + stock +
-                                                                '\n\n$' + prijs;
-                                                                ramprijs = prijs;
+                // Debug the image variable
+                console.log("Image URL:", image);
+
+                var ramInfoHTML = '<img src="' + image + '" alt="RAM Image" style="max-width: 190px;">' +
+                                '<br>Brand: ' + leverancier +
+                                '<br>Clock speed: ' + clock +
+                                '<br>Capacity: ' + capaciteit + 
+                                '<br>DDR' + ddr + 
+                                '<br><br>' + stock +
+                                '<br><br>$' + prijs;
+
+                document.getElementById('ram-info').innerHTML = ramInfoHTML;
+                ramprijs = prijs; // Assuming ramprijs is a global variable
             });
+
 
             document.getElementById('psu-select').addEventListener('change', function() {
                 var selectedOption = this.options[this.selectedIndex];
                 var prijs = selectedOption.getAttribute('data-prijs');
                 var stock = selectedOption.getAttribute('data-stock');
-                stock = checkstock(stock)
+                stock = checkstock(stock);
                 var watt = selectedOption.getAttribute('data-watt');
                 var type = selectedOption.getAttribute('data-type');
                 var leverancier = selectedOption.getAttribute('data-leverancier');
-                document.getElementById('psu-info').innerText = 'Brand: ' + leverancier +
-                                                                '\nWattage: ' + watt + 'W' +
-                                                                '\nType: ' + type + 
-                                                                '\n\n\n\n\n\n\n' + stock +
-                                                                '\n\n$' + prijs;
-                                                                psuprijs = prijs;
+                var image = selectedOption.getAttribute('data-image'); // Assuming this attribute contains the image URL
+
+                // Debug the image variable
+                console.log("Image URL:", image);
+
+                var psuInfoHTML = '<img src="' + image + '" alt="PSU Image" style="max-width: 190px;">' +
+                                '<br>Brand: ' + leverancier +
+                                '<br>Wattage: ' + watt + 'W' +
+                                '<br>Type: ' + type + 
+                                '<br><br>' + stock +
+                                '<br><br>$' + prijs;
+
+                document.getElementById('psu-info').innerHTML = psuInfoHTML;
+                psuprijs = prijs; // Assuming psuprijs is a global variable
             });
+
 
             document.getElementById('cpu-select').addEventListener('change', function() {
                 var selectedOption = this.options[this.selectedIndex];
@@ -291,87 +308,128 @@
                 var cores = selectedOption.getAttribute('data-cores');
                 var clock = selectedOption.getAttribute('data-clock');
                 var socket = selectedOption.getAttribute('data-socket');
+                var image = selectedOption.getAttribute('data-image');
 
-                document.getElementById('cpu-info').innerText = 'Brand: ' + leverancier +
-                                                                '\nCores: ' + cores +
-                                                                '\nClock speed: ' + clock + 
-                                                                '\nSocket: ' + socket + 
-                                                                '\n\n\n\n\n\n' + stock +
-                                                                '\n\n$' + prijs;
-                                                                cpuprijs = prijs;
+                console.log("Image URL:", image);
+
+                // Set the innerHTML of cpu-info to include the image
+                var cpuInfoHTML = '<img src="' + image + '" alt="CPU Image" style="max-width: 190px;">' +
+                                '<br>Brand: ' + leverancier +
+                                '<br>Cores: ' + cores +
+                                '<br>Clock speed: ' + clock + 
+                                '<br>Socket: ' + socket + 
+                                '<br><br>' + stock +
+                                '<br><br>$' + prijs;
+
+                document.getElementById('cpu-info').innerHTML = cpuInfoHTML;
+                cpuprijs = prijs; // Assuming cpuprijs is a global variable
             });
+
 
             document.getElementById('gpu-select').addEventListener('change', function() {
                 var selectedOption = this.options[this.selectedIndex];
                 var prijs = selectedOption.getAttribute('data-prijs');
                 var stock = selectedOption.getAttribute('data-stock');
-                stock = checkstock(stock)
+                stock = checkstock(stock);
                 var leverancier = selectedOption.getAttribute('data-leverancier');
                 var capaciteit = selectedOption.getAttribute('data-capaciteit');
                 var clock = selectedOption.getAttribute('data-clock');
                 var gddr = selectedOption.getAttribute('data-gddr');
-                
-                document.getElementById('gpu-info').innerText = 'Brand: ' + leverancier +
-                                                                '\nCapacity: ' + capaciteit + ' VRAM' +
-                                                                '\nClock speed: ' + clock + 
-                                                                '\nGDDR' + gddr + 
-                                                                '\n\n\n\n\n\n' + stock +
-                                                                '\n\n$' + prijs;
-                                                                gpuprijs = prijs;
+                var image = selectedOption.getAttribute('data-image'); 
+
+                // Debug the image variable
+                console.log("Image URL:", image);
+
+                // Set the innerHTML of gpu-info to include the image
+                var gpuInfoHTML = '<img src="' + image + '" alt="GPU Image" style="max-width: 190px;">' +
+                                '<br>Brand: ' + leverancier +
+                                '<br>Capacity: ' + capaciteit + ' VRAM' +
+                                '<br>Clock speed: ' + clock + 
+                                '<br>GDDR' + gddr + 
+                                '<br><br>' + stock +
+                                '<br><br>$' + prijs;
+
+                document.getElementById('gpu-info').innerHTML = gpuInfoHTML;
+                gpuprijs = prijs; // Assuming gpuprijs is a global variable
             });
+
 
             document.getElementById('mom-select').addEventListener('change', function() {
                 var selectedOption = this.options[this.selectedIndex];
                 var prijs = selectedOption.getAttribute('data-prijs');
                 var stock = selectedOption.getAttribute('data-stock');
-                stock = checkstock(stock)
+                stock = checkstock(stock);
                 var leverancier = selectedOption.getAttribute('data-leverancier');
                 var socket = selectedOption.getAttribute('data-socket');
                 var gddr = selectedOption.getAttribute('data-gddr');
                 var ddr = selectedOption.getAttribute('data-ddr');
+                var image = selectedOption.getAttribute('data-image');
 
-                document.getElementById('mom-info').innerText = 'Brand: ' + leverancier +
-                                                                '\nSocket: ' + socket +
-                                                                '\nGDDR: ' + gddr + 
-                                                                '\nDDR' + ddr + 
-                                                                '\n\n\n\n\n\n' + stock +
-                                                                '\n\n$' + prijs;
-                                                                momprijs = prijs;
+                // Debug the image variable
+                console.log("Image URL:", image);
+
+                var momInfoHTML = '<img src="' + image + '" alt="Motherboard Image" style="max-width: 190px;">' +
+                                '<br>Brand: ' + leverancier +
+                                '<br>Socket: ' + socket +
+                                '<br>GDDR: ' + gddr + 
+                                '<br>DDR' + ddr + 
+                                '<br><br>' + stock +
+                                '<br><br>$' + prijs;
+
+                document.getElementById('mom-info').innerHTML = momInfoHTML;
+                momprijs = prijs; // Assuming momprijs is a global variable
             });
+
 
             document.getElementById('storage-select').addEventListener('change', function() {
                 var selectedOption = this.options[this.selectedIndex];
                 var prijs = selectedOption.getAttribute('data-prijs');
                 var stock = selectedOption.getAttribute('data-stock');
-                stock = checkstock(stock)
+                stock = checkstock(stock);
                 var capaciteit = selectedOption.getAttribute('data-capaciteit');
                 var leverancier = selectedOption.getAttribute('data-leverancier');
                 var type = selectedOption.getAttribute('data-type');
+                var image = selectedOption.getAttribute('data-image');
 
-                document.getElementById('storage-info').innerText = 'Brand: ' + leverancier +
-                                                                '\nCapacity: ' + capaciteit +
-                                                                '\nType: ' + type + 
-                                                                '\n\n\n\n\n\n\n' + stock +
-                                                                '\n\n$' + prijs;
-                                                                storageprijs = prijs;
+                // Debug the image variable
+                console.log("Image URL:", image);
+
+                var storageInfoHTML = '<img src="' + image + '" alt="Storage Image" style="max-width: 190px;">' +
+                                    '<br>Brand: ' + leverancier +
+                                    '<br>Capacity: ' + capaciteit +
+                                    '<br>Type: ' + type + 
+                                    '<br><br>' + stock +
+                                    '<br><br>$' + prijs;
+
+                document.getElementById('storage-info').innerHTML = storageInfoHTML;
+                storageprijs = prijs; // Assuming storageprijs is a global variable
             });
+
 
             document.getElementById('case-select').addEventListener('change', function() {
                 var selectedOption = this.options[this.selectedIndex];
                 var prijs = selectedOption.getAttribute('data-prijs');
                 var stock = selectedOption.getAttribute('data-stock');
-                stock = checkstock(stock)
+                stock = checkstock(stock);
                 var leverancier = selectedOption.getAttribute('data-leverancier');
                 var aantalfans = selectedOption.getAttribute('data-aantalfans');
                 var afmetingen = selectedOption.getAttribute('data-afmetingen');
+                var image = selectedOption.getAttribute('data-image');
 
-                document.getElementById('case-info').innerText = 'Brand: ' + leverancier +
-                                                                '\nAmount of fans: ' + aantalfans +
-                                                                '\nDimensions: ' + afmetingen + 
-                                                                '\n\n\n\n\n\n\n' + stock +
-                                                                '\n\n$' + prijs;
-                                                                caseprijs = prijs;
+                // Debug the image variable
+                console.log("Image URL:", image);
+
+                var caseInfoHTML = '<img src="' + image + '" alt="Case Image" style="max-width: 190px;">' +
+                                '<br>Brand: ' + leverancier +
+                                '<br>Amount of fans: ' + aantalfans +
+                                '<br>Dimensions: ' + afmetingen + 
+                                '<br><br>' + stock +
+                                '<br><br>$' + prijs;
+
+                document.getElementById('case-info').innerHTML = caseInfoHTML;
+                caseprijs = prijs; // Assuming caseprijs is a global variable
             });
+
         }
 
         function round(number, precision) {

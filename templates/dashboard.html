@@ -44,27 +44,27 @@
         </div>
     {% for item in prebuilt %}      <!-- Making as much prebuilts "div"'s as there are in the database -->
     <div class="options-item">
-        <h2 id="title">{{item[8]}}</h2>
-        <img src="{{ url_for('static', filename='images/gamingdesktop.png') }}" alt="Main Product" width="250">
-        <li>{{item[7]}}</li>
-        <li>{{item[3]}}</li>
+        <h2 id="title">{{item[9]}}</h2>
+        <img src="{{item[2]}}" alt="prebuilt pic" style="max-height: 240px; width: auto;">
         <li>{{item[4]}}</li>
         <li>{{item[5]}}</li>
-        <li>{{item[2]}}</li>
+        <li>{{item[8]}}</li>
         <li>{{item[6]}}</li>
+        <li>{{item[3]}}</li>
+        <li>{{item[7]}}</li>
         <li>{{item[1]}}</li>
-        <a href="addtocartfromdash/{{item[9]}}">Add to cart ${{item[0]}}</a>
+        <a href="addtocartfromdash/{{item[10]}}">Add to cart ${{item[0]}}</a>
     </div>
     {% endfor %}
     {% if admin %}
         <div class="options-item">
             <h2 id="title">Add items to any table</h2>
-            <img src="{{ url_for('static', filename='images/gpu.png') }}" alt="Main Product" width="340">
+            <img src="{{ url_for('static', filename='images/gpu.png') }}" alt="add item pic" width="340">
             <a href="additem">Add items</a>
         </div>
         <div class="options-item">
             <h2 id="title">Update Items from any table</h2>
-            <img src="{{ url_for('static', filename='images/gpu.png') }}" alt="Main Product" width="340">
+            <img src="{{ url_for('static', filename='images/gpu.png') }}" alt="update item pic" width="340">
             <a href="updateitem">Update items</a>
         </div>
     {% endif %}

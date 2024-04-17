@@ -1,4 +1,5 @@
 import mysql.connector as msql
+import ast
 from mysql.connector import Error
 from config import dbDic
 
@@ -93,25 +94,25 @@ def info_catcher_in_dictionary(table, id=None):
     if id is None:
         match table:
             case 'behuizing':
-                datalist = [{'id':row[0], 'naam': row[1], 'aantalfans':row[2], 'afmetingen':row[3], 'stock':row[4], 'prijs':row[5], 'leverancier':get_foreign_key_name('leverancier', row[6])} for row in result]
+                datalist = [{'id':row[0], 'naam': row[1], 'aantalfans':row[2], 'afmetingen':row[3], 'stock':row[4], 'prijs':row[5], 'leverancier':get_foreign_key_name('leverancier', row[6]), 'fotolink':row[7]} for row in result]
                 return datalist
             case 'cpu':
-                datalist = [{'id':row[0], 'naam': row[1], 'clock':row[2], 'cores':row[3], 'socket':row[4], 'stock':row[5],'prijs':row[6], 'leverancier':get_foreign_key_name('leverancier', row[7])} for row in result]
+                datalist = [{'id':row[0], 'naam': row[1], 'clock':row[2], 'cores':row[3], 'socket':row[4], 'stock':row[5],'prijs':row[6], 'leverancier':get_foreign_key_name('leverancier', row[7]), 'fotolink':row[8]} for row in result]
                 return datalist
             case 'gpu':
-                datalist = [{'id':row[0], 'naam': row[1], 'clock':row[2], 'capaciteit':row[3], 'gddr':row[4], 'stock':row[5],'prijs':row[6], 'leverancier':get_foreign_key_name('leverancier', row[7])} for row in result]
+                datalist = [{'id':row[0], 'naam': row[1], 'clock':row[2], 'capaciteit':row[3], 'gddr':row[4], 'stock':row[5],'prijs':row[6], 'leverancier':get_foreign_key_name('leverancier', row[7]), 'fotolink':row[8]} for row in result]
                 return datalist
             case 'moederbord':
-                datalist = [{'id':row[0], 'naam': row[1], 'socket':row[2], 'ddr':row[3], 'gddr':row[4], 'stock':row[5],'prijs':row[6], 'leverancier':get_foreign_key_name('leverancier', row[7])} for row in result]
+                datalist = [{'id':row[0], 'naam': row[1], 'socket':row[2], 'ddr':row[3], 'gddr':row[4], 'stock':row[5],'prijs':row[6], 'leverancier':get_foreign_key_name('leverancier', row[7]), 'fotolink':row[8]} for row in result]
                 return datalist
             case 'opslag':
-                datalist = [{'id':row[0], 'naam': row[1], 'type':get_foreign_key_name('type', row[2]), 'capaciteit':row[3], 'stock':row[4], 'prijs':row[5], 'leverancier':get_foreign_key_name('leverancier', row[6])} for row in result]
+                datalist = [{'id':row[0], 'naam': row[1], 'type':get_foreign_key_name('type', row[2]), 'capaciteit':row[3], 'stock':row[4], 'prijs':row[5], 'leverancier':get_foreign_key_name('leverancier', row[6]), 'fotolink':row[7]} for row in result]
                 return datalist
             case 'psu':
-                datalist = [{'id':row[0], 'naam': row[1], 'watt':row[2], 'type':get_foreign_key_name('type', row[3]), 'stock':row[4], 'prijs':row[5], 'leverancier':get_foreign_key_name('leverancier', row[6])} for row in result]
+                datalist = [{'id':row[0], 'naam': row[1], 'watt':row[2], 'type':get_foreign_key_name('type', row[3]), 'stock':row[4], 'prijs':row[5], 'leverancier':get_foreign_key_name('leverancier', row[6]), 'fotolink':row[7]} for row in result]
                 return datalist
             case 'ram':
-                datalist = [{'id':row[0], 'naam': row[1], 'clock':row[2], 'capaciteit':row[3], 'ddr':row[4], 'stock':row[5], 'prijs':row[6], 'leverancier':get_foreign_key_name('leverancier', row[7])} for row in result]
+                datalist = [{'id':row[0], 'naam': row[1], 'clock':row[2], 'capaciteit':row[3], 'ddr':row[4], 'stock':row[5], 'prijs':row[6], 'leverancier':get_foreign_key_name('leverancier', row[7]), 'fotolink':row[8]} for row in result]
                 return datalist
             case 'user':
                 datalist = [{'id':row[0], 'gebruikersnaam': row[1], 'pass':row[2], 'naam':row[3], 'adres':row[4], 'uitgegeven':row[5], 'isadmin':row[6], 'cart': []} for row in result]
@@ -121,7 +122,7 @@ def info_catcher_in_dictionary(table, id=None):
     else:
         match table:    
             case 'behuizing':
-                datalist = [{'table':table, 'id':row[0], 'naam': row[1], 'aantalfans':row[2], 'afmetingen':row[3], 'stock':row[4], 'prijs':row[5], 'leverancier':get_foreign_key_name('leverancier', row[6])} for row in result if row[0] == id]
+                datalist = [{'table':table, 'id':row[0], 'naam': row[1], 'aantalfans':row[2], 'afmetingen':row[3], 'stock':row[4], 'prijs':row[5], 'leverancier':get_foreign_key_name('leverancier', row[6]), 'fotolink': row[7]} for row in result if row[0] == id]
                 return datalist[0]
             case 'cpu':
                 datalist = [{'table':table, 'id':row[0], 'naam': row[1], 'clock':row[2], 'cores':row[3], 'socket':row[4], 'stock':row[5],'prijs':row[6], 'leverancier':get_foreign_key_name('leverancier', row[7])} for row in result if row[0] == id]
@@ -154,6 +155,17 @@ def make_cart(itemlistdict):
         totalprice += dict['prijs']
     return list_of_names, round(totalprice, 2)
 
+def string_to_int_list(input_str):
+    try:
+        # Using ast.literal_eval to safely evaluate the string as a Python literal
+        int_list = ast.literal_eval(input_str)
+        # Filter out non-integer elements
+        int_list = [x for x in int_list if isinstance(x, int)]
+        return int_list
+    except (SyntaxError, ValueError) as e:
+        print(f"Error converting string to list: {e}")
+        return None
+
 def prebuilt_name_converter(prebuiltlist, buy=None):
     if buy == None or buy != 'buy':
         newlist = []
@@ -167,6 +179,8 @@ def prebuilt_name_converter(prebuiltlist, buy=None):
                         case 1:   
                             name = get_foreign_key_name('behuizing', tup[i])
                             tuplelist.append(name)
+                            image_url = info_catcher_in_dictionary('behuizing', tup[0])
+                            tuplelist.append(image_url['fotolink'])
                         case 2:   
                             name = get_foreign_key_name('opslag', tup[i])
                             tuplelist.append(name)
@@ -187,44 +201,50 @@ def prebuilt_name_converter(prebuiltlist, buy=None):
                             name = get_foreign_key_name('moederbord', tup[i])
                             tuplelist.append(name)
                         case 8:
-                            tuplelist.append(tup[i])   
+                            tuplelist.append(tup[i]) 
                         case _:
                             raise ValueError("Item index cannot be empty")
                 else:
                     raise ValueError("Tuple is wrong length, check if the correct tuple was given")
             idlist = list(tup)
+            idlist.pop(8)
+            idlist.pop(2)
             idlist.pop(0)
-            idlist.pop(7)
+
             tuplelist.append(idlist)
             newlist.append(tuple(tuplelist))
         return newlist
     elif buy == 'buy':
         newlist = []
-        for item in range(len(prebuiltlist)):
-            match item:
-                case 0:   
-                    name = ('behuizing', prebuiltlist[item])
-                    newlist.append(name)
-                case 1:   
-                    name = ('opslag', prebuiltlist[item])
-                    newlist.append(name)
-                case 2:   
-                    name = ('cpu', prebuiltlist[item])
-                    newlist.append(name)
-                case 3:   
-                    name = ('gpu', prebuiltlist[item])
-                    newlist.append(name)
-                case 4:   
-                    name = ('ram', prebuiltlist[item])
-                    newlist.append(name)
-                case 5:   
-                    name = ('psu', prebuiltlist[item])
-                    newlist.append(name)
-                case 6:   
-                    name = ('moederbord', prebuiltlist[item])
-                    newlist.append(name)
-                case _:
-                    raise ValueError(f"Item index cannot be empty, errors in this list: {prebuiltlist}")
+        if isinstance(prebuiltlist, list):
+            for item in range(len(prebuiltlist)):
+                match item:
+                    case 0:   
+                        name = ('behuizing', prebuiltlist[item])
+                        newlist.append(name)
+                    case 1:   
+                        name = ('opslag', prebuiltlist[item])
+                        newlist.append(name)
+                    case 2:   
+                        name = ('cpu', prebuiltlist[item])
+                        newlist.append(name)
+                    case 3:   
+                        name = ('gpu', prebuiltlist[item])
+                        newlist.append(name)
+                    case 4:   
+                        name = ('ram', prebuiltlist[item])
+                        newlist.append(name)
+                    case 5:   
+                        name = ('psu', prebuiltlist[item])
+                        newlist.append(name)
+                    case 6:   
+                        name = ('moederbord', prebuiltlist[item])
+                        newlist.append(name)
+                    case _:
+                        raise ValueError(f"Item index cannot be empty, errors in this list: {prebuiltlist}")
+        else:
+            raise TypeError(f"{prebuiltlist} is not a list, check if correct list is given")
+        print(newlist)
         return newlist
 
 
