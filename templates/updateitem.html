@@ -4,86 +4,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>Update Item</title>
 </head>
 
 <body>
     <h1>Update Item</h1>
-    <form action="/updateitem" method="POST" id="updateForm">
+    <form id="updateForm">
         <label for="table">Select Table:</label>
-        <select id="table" name="table" onchange="populateColumns()">
+        <select id="table" name="table">
             <option value="cpu">CPU</option>
             <option value="gpu">GPU</option>
             <option value="ram">RAM</option>
-            <option value="moederbord">Motherboard</option>
-            <option value="opslag">Storage</option>
+            <option value="mom">Motherboard</option>
+            <option value="storage">Storage</option>
             <option value="psu">PSU</option>
-            <option value="behuizing">Case</option>
+            <option value="case">Case</option>
             <!-- Add other table options here -->
         </select>
-        <br><br>
-
-        <label for="column">Select Column to Update:</label>
-        <select id="column" name="column">
-            <!-- Column options will be populated dynamically -->
-        </select>
-        <br><br>
-
-        <label for="item_id">Item ID:</label>
-        <input type="text" id="item_id" name="item_id">
-        <br><br>
-
-        <!-- Add input fields for other column values as needed -->
-
-        <input type="submit" value="Update Item">
     </form>
 
+    <div id="tableContainer">
+        <!-- Table will be populated dynamically -->
+    </div>
+
     <script>
-        function populateColumns() {
+        function populateTable() {
             var tableSelect = document.getElementById("table");
-            var columnSelect = document.getElementById("column");
             var selectedTable = tableSelect.value;
-            columnSelect.innerHTML = ""; // Clear previous options
+            var tableContainer = document.getElementById("tableContainer");
+            tableContainer.innerHTML = ""; // Clear previous table
 
-            // Define column options based on the selected table
-            var columns = [];
-            switch (selectedTable) {
-                case "cpu":
-                    columns = ["naam", "clock", "cores", "socket"]; // Example CPU columns
-                    break;
-                case "gpu":
-                    columns = ["naam", "clock", "capaciteit", "gddr"]; // Example GPU columns
-                    break;
-                case "ram":
-                    columns = ["naam", "clock", "capaciteit", "ddr"]; // Example RAM columns
-                    break;
-                case "moederbord":
-                    columns = ["naam", "socket", "ddr", "gddr"]; // Example Motherboard columns
-                    break;
-                case "opslag":
-                    columns = ["naam", "type", "capaciteit"]; // Example Storage columns
-                    break;
-                case "psu":
-                    columns = ["naam", "watt", "type"]; // Example PSU columns
-                    break;
-                case "behuizing":
-                    columns = ["naam", "aantalfans", "afmetingen"]; // Example Case columns
-                    break;
-                default:
-                    columns = []; // Empty columns for unknown tables
-            }
+            // Fetch data for the selected table using Flask route
+            fetch(`/get_options/${selectedTable}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Create and populate the table
+                    var table = document.createElement("table");
+                    var headerRow = table.insertRow();
+                    Object.keys(data[0]).forEach(key => {
+                        var headerCell = headerRow.insertCell();
+                        headerCell.textContent = key.charAt(0).toUpperCase() + key.slice(1);
+                    });
 
-            // Populate the column dropdown with options
-            columns.forEach(function(column) {
-                var option = document.createElement("option");
-                option.value = column;
-                option.text = column.charAt(0).toUpperCase() + column.slice(1); // Capitalize first letter
-                columnSelect.appendChild(option);
-            });
+                    data.forEach(item => {
+                        var row = table.insertRow();
+                        Object.values(item).forEach(value => {
+                            var cell = row.insertCell();
+                            cell.textContent = value;
+                        });
+
+                        // Add update button column
+                        var updateCell = row.insertCell();
+                        var updateButton = document.createElement("button");
+                        updateButton.textContent = "Update";
+                        updateButton.className = "update-button";
+                        updateButton.onclick = function() {
+                            // Add your update logic here, e.g., redirect to update page with item ID
+                            alert("Update item ID: " + item.id);
+                        };
+                        updateCell.appendChild(updateButton);
+                    });
+
+                    tableContainer.appendChild(table);
+                })
+                .catch(error => {
+                    console.error('Error fetching table data:', error);
+                });
         }
 
-        // Call populateColumns initially to populate the columns based on the default selected table
-        populateColumns();
+        // Call populateTable initially to populate the table based on the default selected table
+        populateTable();
+
+        // Add event listener to re-populate table on table selection change
+        document.getElementById("table").addEventListener("change", populateTable);
     </script>
 </body>
 
