@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Item</title>
+</head>
+
+<body>
+    <h1>Update Item</h1>
+    <form action="/updateitem" method="POST" id="updateForm">
+        <label for="table">Select Table:</label>
+        <select id="table" name="table" onchange="populateColumns()">
+            <option value="cpu">CPU</option>
+            <option value="gpu">GPU</option>
+            <option value="ram">RAM</option>
+            <option value="moederbord">Motherboard</option>
+            <option value="opslag">Storage</option>
+            <option value="psu">PSU</option>
+            <option value="behuizing">Case</option>
+            <!-- Add other table options here -->
+        </select>
+        <br><br>
+
+        <label for="column">Select Column to Update:</label>
+        <select id="column" name="column">
+            <!-- Column options will be populated dynamically -->
+        </select>
+        <br><br>
+
+        <label for="item_id">Item ID:</label>
+        <input type="text" id="item_id" name="item_id">
+        <br><br>
+
+        <!-- Add input fields for other column values as needed -->
+
+        <input type="submit" value="Update Item">
+    </form>
+
+    <script>
+        function populateColumns() {
+            var tableSelect = document.getElementById("table");
+            var columnSelect = document.getElementById("column");
+            var selectedTable = tableSelect.value;
+            columnSelect.innerHTML = ""; // Clear previous options
+
+            // Define column options based on the selected table
+            var columns = [];
+            switch (selectedTable) {
+                case "cpu":
+                    columns = ["naam", "clock", "cores", "socket"]; // Example CPU columns
+                    break;
+                case "gpu":
+                    columns = ["naam", "clock", "capaciteit", "gddr"]; // Example GPU columns
+                    break;
+                case "ram":
+                    columns = ["naam", "clock", "capaciteit", "ddr"]; // Example RAM columns
+                    break;
+                case "moederbord":
+                    columns = ["naam", "socket", "ddr", "gddr"]; // Example Motherboard columns
+                    break;
+                case "opslag":
+                    columns = ["naam", "type", "capaciteit"]; // Example Storage columns
+                    break;
+                case "psu":
+                    columns = ["naam", "watt", "type"]; // Example PSU columns
+                    break;
+                case "behuizing":
+                    columns = ["naam", "aantalfans", "afmetingen"]; // Example Case columns
+                    break;
+                default:
+                    columns = []; // Empty columns for unknown tables
+            }
+
+            // Populate the column dropdown with options
+            columns.forEach(function(column) {
+                var option = document.createElement("option");
+                option.value = column;
+                option.text = column.charAt(0).toUpperCase() + column.slice(1); // Capitalize first letter
+                columnSelect.appendChild(option);
+            });
+        }
+
+        // Call populateColumns initially to populate the columns based on the default selected table
+        populateColumns();
+    </script>
+</body>
+
+</html>

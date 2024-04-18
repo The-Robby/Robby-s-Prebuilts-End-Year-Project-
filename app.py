@@ -90,8 +90,8 @@ def dashboard():
         prebuilt = df.prebuilt_name_converter(prebuiltlist)             #
         #---------------------------------------------------------------#
         #debug------------------#
-        print(prebuiltlist)     #
-        print(prebuilt)         #
+        #print(prebuiltlist)     #
+        #print(prebuilt)         #
         #-----------------------#
         # render dashboard based on admin or not----------------------------------------------------#
         if account['isadmin'] == 1:                                                                 #
@@ -299,7 +299,7 @@ def additem():
                         # distinguish all types-------------------------#
                         for key, value in request.form.items():         #
                             # distinguish all strings---------------#   #
-                            if key in ('naam', 'clock', 'socket'):  #   #
+                            if key in ('naam', 'clock', 'socket', 'fotolink'):  #   #
                                 values += '"' + value + '",'        #   #
                             #---------------------------------------#   #
                             # distinguish all numeric values----#       #
@@ -321,7 +321,7 @@ def additem():
                     values = ''
                     if request.method == 'POST':
                         for key, value in request.form.items(): 
-                            if key in ('naam', 'clock', 'vramcap', 'gddr'): 
+                            if key in ('naam', 'clock', 'vramcap', 'gddr', 'fotolink'): 
                                 values += '"' + value + '",'  
                             else:
                                 values += value
@@ -337,7 +337,7 @@ def additem():
                     values = ''
                     if request.method == 'POST':
                         for key, value in request.form.items(): 
-                            if key in ('naam', 'clock', 'capaciteit'): 
+                            if key in ('naam', 'clock', 'capaciteit', 'fotolink'): 
                                 values += '"' + value + '",' 
                             else:
                                 values += value
@@ -354,7 +354,7 @@ def additem():
                     values = ''
                     if request.method == 'POST':
                         for key, value in request.form.items(): 
-                            if key in ('naam'):  
+                            if key in ('naam', 'fotolink'):  
                                 values += '"' + value + '",'  
                             else:
                                 values += value
@@ -370,7 +370,7 @@ def additem():
                     values = ''
                     if request.method == 'POST':
                         for key, value in request.form.items(): 
-                            if key in ('naam', 'socket', 'gddr'): 
+                            if key in ('naam', 'socket', 'gddr', 'fotolink'): 
                                 values += '"' + value + '",'  
                             else:
                                 values += value
@@ -387,7 +387,7 @@ def additem():
                     values = ''
                     if request.method == 'POST':
                         for key, value in request.form.items(): 
-                            if key in ('naam', 'capaciteit'):  
+                            if key in ('naam', 'capaciteit', 'fotolink'):  
                                 values += '"' + value + '",'  
                             else:
                                 values += value
@@ -404,7 +404,7 @@ def additem():
                     values = ''
                     if request.method == 'POST':
                         for key, value in request.form.items(): 
-                            if key in ('naam', 'afmetingen'):  
+                            if key in ('naam', 'afmetingen', 'fotolink'):  
                                 values += '"' + value + '",'  
                             else:
                                 values += value
@@ -422,6 +422,38 @@ def additem():
             redirect(url_for('login'))
     return redirect(url_for('login'))
 
+#------------------------------------------------------------------------UPDATEITEM.HTML---------------------------------------------------------------------------------
+@app.route('/updateitem', methods=['POST', 'GET'])
+def updateitem():
+    if 'account' in session:
+        account = session['account']
+        if account['isadmin'] == 1:
+            if request.method == 'POST':
+                # Extract form data
+                table = request.form.get('table')
+                column = request.form.get('column')
+                item_id = request.form.get('item_id')  # Assuming you have an ID for the item
+                # Set the conditions for updating (assuming item_id is the primary key)
+                conditions = f"ID = {item_id}"
+
+                # Extract and set updated values based on the table type
+                set_updated_values = ''
+                for key, value in request.form.items():
+                    # Exclude non-value fields like 'table' and 'item_id'
+                    if key not in ('table', 'item_id'):
+                        set_updated_values += f"{key} = '{value}',"
+
+                # Remove the trailing comma
+                set_updated_values = set_updated_values.rstrip(',')
+
+                # Call the update function
+                df.update_prebuiltDB(table, set_updated_values, conditions)
+
+            # Redirect back to the previous page or to a specific route
+            return render_template('updateitem.html')
+
+    # If not logged in as admin or if something goes wrong, redirect to login
+    return redirect(url_for('login'))
 
 
 if __name__ == "__main__":
