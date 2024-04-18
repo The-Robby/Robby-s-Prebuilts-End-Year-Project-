@@ -9,7 +9,36 @@
 </head>
 
 <body>
-    <h1>Update Item</h1>
+    <topbar>
+        <div class="top-bar-button">
+            <a href="dashboard" id="dash-button">
+                <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="dashboard" height="30">
+            </a>
+        </div>
+        <div class="top-bar-button">
+            <a href="viewcart" id="cart-button">
+                <img src="https://static.vecteezy.com/system/resources/previews/019/787/018/original/shopping-cart-icon-shopping-basket-on-transparent-background-free-png.png" alt="cart" height="30">
+            </a>
+        </div>
+        <div class="top-bar-button">
+            <a href="login" id="logout-button">
+                <img src="https://cdn0.iconfinder.com/data/icons/login-44/24/logout_doot_interface_essentials_login_regular_f-512.png" alt="log out" height="30">
+            </a>
+        </div>
+        <div class="top-bar-button">
+            <a href="profile" id="profile-button">
+                <img src="https://static-00.iconduck.com/assets.00/profile-icon-512x512-w0uaq4yr.png" alt="profile" height="30">
+            </a>
+        </div>
+        {% if account['isadmin'] == 1%}
+        <div class="top-bar-button">
+            <a href="debug" id="bug-button">
+                <img src="https://static.thenounproject.com/png/83827-200.png" alt="debug" height="30">
+            </a>
+        </div>
+        {% endif %}
+    </topbar>
+    <h1 id="update-header">Update Item</h1>
     <form id="updateForm">
         <label for="table">Select Table:</label>
         <select id="table" name="table">
@@ -27,6 +56,18 @@
     <div id="tableContainer">
         <!-- Table will be populated dynamically -->
     </div>
+    <button onclick="populateTable()">Refresh Data</button>
+
+    <!-- Overlay for update -->
+    <div id="updateOverlay" class="overlay">
+        <div class="overlay-content">
+            <span class="close" onclick="closeOverlay()">&times;</span>
+            <h2>Update Item</h2>
+            <form id="updateItemForm" method="post">
+                <!-- Input fields will be populated dynamically -->
+            </form>
+        </div>
+    </div>
 
     <script>
         function populateTable() {
@@ -34,7 +75,7 @@
             var selectedTable = tableSelect.value;
             var tableContainer = document.getElementById("tableContainer");
             tableContainer.innerHTML = ""; // Clear previous table
-
+            
             // Fetch data for the selected table using Flask route
             fetch(`/get_options/${selectedTable}`)
                 .then(response => response.json())
@@ -60,8 +101,7 @@
                         updateButton.textContent = "Update";
                         updateButton.className = "update-button";
                         updateButton.onclick = function() {
-                            // Add your update logic here, e.g., redirect to update page with item ID
-                            alert("Update item ID: " + item.id);
+                            openOverlay(selectedTable ,item); // Pass the item object to populate overlay
                         };
                         updateCell.appendChild(updateButton);
                     });
@@ -71,6 +111,42 @@
                 .catch(error => {
                     console.error('Error fetching table data:', error);
                 });
+        }
+
+        function openOverlay(table, item) {
+            var overlay = document.getElementById("updateOverlay");
+            overlay.style.display = "block";
+            var updateForm = document.getElementById("updateItemForm");
+            updateForm.innerHTML = ""; // Clear previous form fields
+
+            var tableInput = document.createElement("input");
+            tableInput.type = "hidden";
+            tableInput.name = "table";
+            tableInput.value = table;
+            updateForm.appendChild(tableInput);
+
+            // Populate input fields based on item data
+            for (const [key, value] of Object.entries(item)) {
+                var label = document.createElement("label");
+                label.textContent = key.charAt(0).toUpperCase() + key.slice(1);
+                var input = document.createElement("input");
+                input.type = "text";
+                input.name = key;
+                input.value = value;
+                updateForm.appendChild(label);
+                updateForm.appendChild(input);
+                
+            }
+            var button = document.createElement('button');
+            button.textContent = "Submit";
+            button.type = "submit"; 
+            updateForm.appendChild(button);
+
+        }
+
+        function closeOverlay() {
+            var overlay = document.getElementById("updateOverlay");
+            overlay.style.display = "none";
         }
 
         // Call populateTable initially to populate the table based on the default selected table

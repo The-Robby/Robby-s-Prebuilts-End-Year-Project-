@@ -110,6 +110,7 @@ def builder():
 
 @app.route('/get_options/<component>')
 def get_options(component):
+    print('succesfully ran')
     # Fetch options for the specified component which has been passed on from the html
     if component in df.components:
         return jsonify(df.components[component])
@@ -254,13 +255,13 @@ def debug():
     if 'account' in session:
         account = session['account']
         if account['isadmin'] == 1:
-            # declare variable from url argument
-            table = request.args.get('table')
-            # ittirate over every entity in any database.table or session to view any info
-            if table == 'session':
-                items = [(key, value) for key, value in account.items()]
-            else:
-                items = df.getDataFromTable(table)
+            table = request.args.get('table') # declare variable from url argument
+            # ittirate over every entity in any database.table or session to view any info--#
+            if table == 'session':                                                          #
+                items = [(key, value) for key, value in account.items()]                    #
+            else:                                                                           #
+                items = df.getDataFromTable(table)                                          #
+            #-------------------------------------------------------------------------------#
         else:
             return redirect(url_for('login'))
     return render_template("debug.html", account=account, table=table, items=items)
@@ -428,31 +429,55 @@ def updateitem():
     if 'account' in session:
         account = session['account']
         if account['isadmin'] == 1:
+            admin = True
             if request.method == 'POST':
-                # Extract form data
-                table = request.form.get('table')
-                column = request.form.get('column')
-                item_id = request.form.get('item_id')  # Assuming you have an ID for the item
-                # Set the conditions for updating (assuming item_id is the primary key)
-                conditions = f"ID = {item_id}"
+                items = {key : value for key, value in request.form.items()} #put all items with names and values inside dictionary
+                # get id and remove it from dictionary afterwards-------#
+                pkid = items.get('id')                                  #
+                items.pop('id')                                         #
+                # ------------------------------------------------------#
 
-                # Extract and set updated values based on the table type
-                set_updated_values = ''
-                for key, value in request.form.items():
-                    # Exclude non-value fields like 'table' and 'item_id'
-                    if key not in ('table', 'item_id'):
-                        set_updated_values += f"{key} = '{value}',"
+                # rename tables to correct names in database ---------------#
+                if items['table'] not in ('mom', 'storage', 'case'):        # 
+                    table = items.get('table')                              #
+                else:                                                       #
+                    if items['table'] == 'mom':                             #
+                        table = 'moederbord'    #---------------------------# this table has another pk id name
+                        pkname = 'momid'                                    #
+                    elif items['table'] == 'storage':                       #
+                        table = 'opslag'                                    #
+                    elif items['table'] == 'case':                          #
+                        table = 'behuizing'                                 #
+                items.pop('table')                                          # and remove it afterwards
+                #-----------------------------------------------------------#
 
-                # Remove the trailing comma
-                set_updated_values = set_updated_values.rstrip(',')
+                #-These will be handled eventually, now they are removed----#
+                if 'leverancier' in items:                                  #
+                    items.pop('leverancier')                                #
+                if 'type' in items:                                         #
+                    items.pop('type')                                       #
+                #-----------------------------------------------------------#
 
-                # Call the update function
-                df.update_prebuiltDB(table, set_updated_values, conditions)
+                stringitems = [item for item in items if item in ('naam','afmetingen','fotolink','capaciteit','socket','gddr','clock','vramcap')] # create a list of keys wich value needs to be a string type
 
-            # Redirect back to the previous page or to a specific route
-            return render_template('updateitem.html')
-
-    # If not logged in as admin or if something goes wrong, redirect to login
+                # create the values as 1 string ----------------------------#
+                values = ''                                                 #
+                for key, value in items.items():                            #
+                    if key in (stringitems):                                #
+                        values += key + ' = ' + '"' + value + '",'          #
+                    else:                                                   #
+                        values += key + ' = ' + value                       #
+                        values += ','                                       #
+                # and finally pass them to the dedicated function handling the update event-----#
+                if values != '':                                                                #
+                    values = values.rstrip(",")                                                 #
+                    print(values)                                                               #
+                    if table == 'moederbord':                                                   #
+                        df.update_prebuiltDB(table, values, f'{pkname}id = {pkid}')             #
+                    else:                                                                       #
+                        df.update_prebuiltDB(table, values, f'{table}id = {pkid}')              #
+                # ------------------------------------------------------------------------------# 
+            return render_template('updateitem.html', account=account, admin=admin)
     return redirect(url_for('login'))
 
 
