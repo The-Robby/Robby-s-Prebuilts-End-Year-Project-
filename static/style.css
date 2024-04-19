@@ -540,3 +540,13 @@ td {
     flex-direction: column;
     gap: 8px;
 }
+
+.refresh-symbol {
+    position: fixed;
+    right: 49.8%;
+    top: 10%;
+    cursor: pointer;
+}
+.refresh-symbol:hover {
+    color: #ccc
+}

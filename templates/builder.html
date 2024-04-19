@@ -64,7 +64,7 @@
             <p>Total price: ${{ totalprice }}</p>
             {% if products != () %}
             <a href="buy">Buy!</a>
-            <a href="/deletecart">Push your cart down the ditch</a>
+            <a onclick="showOverlay('none')">Push your cart down the ditch</a>
             {% endif %}
         </div>
     </div>
@@ -436,10 +436,19 @@
         function showOverlay(item) {
             var overlay = document.getElementById("overlay");
             overlay.style.display = "block";
-            var okButton = document.getElementById("okButton");
+            var messageParagraph = document.querySelector(".dialog-box p");
+            if (item == 'none') {
+                var okButton = document.getElementById("okButton");
+                messageParagraph.textContent = "Are you willing to abandon your cart in the ditch?";
+                okButton.onclick = function() {
+                    window.location.href ="/deletecart"; 
+                };
+            }
+            else {var okButton = document.getElementById("okButton");
                 okButton.onclick = function() {
                     window.location.href = "/delete-item?item=" + item;
                 };
+            }
         }
 
         function hideOverlay() {
