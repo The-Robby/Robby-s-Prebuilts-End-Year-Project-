@@ -40,19 +40,26 @@
         {% if table is none %}
         <h1>Which table do you want to debug?</h1>
         <div class="add-item">
-            <a href="debug?table=cpu">CPU</a>
-            <a href="debug?table=gpu">GPU</a>
-            <a href="debug?table=ram">RAM</a>
-            <a href="debug?table=psu">PSU</a>
-            <a href="debug?table=moederbord">Motherboard</a>
-            <a href="debug?table=opslag">Storage</a>
-            <a href="debug?table=behuizing">Case</a>
-            <a href="debug?table=user">User</a>
-            <a href="debug?table=type">Type</a>
-            <a href="debug?table=prebuilt">Prebuilt</a>
-            <a href="debug?table=leverancier">Brand</a>
-            <a href="debug?table=session">session</a>
-            <a href="dashboard">Go back to dashboard</a>
+            <div class="debug-class">
+                <div class="debug-class-item">
+                    <a href="debug?table=cpu">CPU</a>
+                    <a href="debug?table=gpu">GPU</a>
+                    <a href="debug?table=ram">RAM</a>
+                    <a href="debug?table=psu">PSU</a>
+                    <a href="debug?table=moederbord">Motherboard</a>
+                    <a href="debug?table=opslag">Storage</a>
+                    <a href="debug?table=behuizing">Case</a>
+                </div>
+                <div class="debug-class-item">
+                    <a href="debug?table=type">Type</a>
+                    <a href="debug?table=leverancier">Brand</a>
+                    <a href="debug?table=prebuilt">Prebuilt</a>
+                </div>
+                <div class="debug-class-item">
+                    <a href="debug?table=user">User</a>
+                    <a href="debug?table=session">session</a>
+                </div>
+            </div>
         </div>
         {% else %}
         <h2>{{table}}</h2>

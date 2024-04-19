@@ -10,28 +10,28 @@
 <body>
     <topbar>
         <div class="top-bar-button">
-            <a href="dashboard" id="dash-button">
+            <a href="/dashboard" id="dash-button">
                 <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="dashboard" height="30">
             </a>
         </div>
         <div class="top-bar-button">
-            <a href="viewcart" id="cart-button">
+            <a href="/viewcart" id="cart-button">
                 <img src="https://static.vecteezy.com/system/resources/previews/019/787/018/original/shopping-cart-icon-shopping-basket-on-transparent-background-free-png.png" alt="cart" height="30">
             </a>
         </div>
         <div class="top-bar-button">
-            <a href="login" id="logout-button">
+            <a href="/login" id="logout-button">
                 <img src="https://cdn0.iconfinder.com/data/icons/login-44/24/logout_doot_interface_essentials_login_regular_f-512.png" alt="log out" height="30">
             </a>
         </div>
         <div class="top-bar-button">
-            <a href="profile" id="profile-button">
+            <a href="/profile" id="profile-button">
                 <img src="https://static-00.iconduck.com/assets.00/profile-icon-512x512-w0uaq4yr.png" alt="profile" height="30">
             </a>
         </div>
         {% if account['isadmin'] == 1%}
         <div class="top-bar-button">
-            <a href="debug" id="bug-button">
+            <a href="/debug" id="bug-button">
                 <img src="https://static.thenounproject.com/png/83827-200.png" alt="debug" height="30">
             </a>
         </div>
@@ -64,9 +64,8 @@
             <p>Total price: ${{ totalprice }}</p>
             {% if products != () %}
             <a href="buy">Buy!</a>
+            <a href="/deletecart">Push your cart down the ditch</a>
             {% endif %}
-            <a href="builder">Back to builder</a>
-            <a href="dashboard">Back to dashboard</a>
         </div>
     </div>
     {% endif %}
@@ -79,8 +78,6 @@
             {% endfor %}
             <p>Total price: ${{ totalprice }}</p>
             <a href="/viewcart">Check out your shopping cart</a>
-            <a href="/builder">Back to builder</a>
-            <a href="/dashboard">Back to dashboard</a>
         </div>
     </div>
     {% endif %}
@@ -88,8 +85,7 @@
     <div class="cart-screen">
         <div class="cart-item">
             <h2>You Succesfully bought all items for ${{totalprice}}. <br>These will be delivered at {{account['adres']}} on the name {{account['naam']}}</h2>
-            <a href="viewcart">Check out your shopping cart</a>
-            <a href="dashboard">Back to dashboard</a>
+            <a href="/viewcart">Check out your shopping cart</a>
         </div>
     </div>
     {% endif %}
@@ -175,7 +171,6 @@
             
         </form>
         <button type="submit" id="cart">Add to Cart</button>
-        <a href="/dashboard">Back</a>
     </div>
     {% endif %}
 
@@ -221,6 +216,7 @@
                         optionElem.setAttribute('data-stock', option.stock);
                         optionElem.setAttribute('data-aantalfans', option.aantalfans);
                         optionElem.setAttribute('data-capaciteit', option.capaciteit);
+                        optionElem.setAttribute('data-vramcap', option.vramcap);
                         optionElem.setAttribute('data-clock', option.clock);
                         optionElem.setAttribute('data-watt', option.watt);
                         optionElem.setAttribute('data-type', option.type);
@@ -332,7 +328,7 @@
                 var stock = selectedOption.getAttribute('data-stock');
                 stock = checkstock(stock);
                 var leverancier = selectedOption.getAttribute('data-leverancier');
-                var capaciteit = selectedOption.getAttribute('data-capaciteit');
+                var capaciteit = selectedOption.getAttribute('data-vramcap');
                 var clock = selectedOption.getAttribute('data-clock');
                 var gddr = selectedOption.getAttribute('data-gddr');
                 var image = selectedOption.getAttribute('data-image'); 

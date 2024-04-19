@@ -100,7 +100,7 @@ def info_catcher_in_dictionary(table, id=None):
                 datalist = [{'id':row[0], 'naam': row[1], 'clock':row[2], 'cores':row[3], 'socket':row[4], 'stock':row[5],'prijs':row[6], 'leverancier':get_foreign_key_name('leverancier', row[7]), 'fotolink':row[8]} for row in result]
                 return datalist
             case 'gpu':
-                datalist = [{'id':row[0], 'naam': row[1], 'clock':row[2], 'capaciteit':row[3], 'gddr':row[4], 'stock':row[5],'prijs':row[6], 'leverancier':get_foreign_key_name('leverancier', row[7]), 'fotolink':row[8]} for row in result]
+                datalist = [{'id':row[0], 'naam': row[1], 'clock':row[2], 'vramcap':row[3], 'gddr':row[4], 'stock':row[5],'prijs':row[6], 'leverancier':get_foreign_key_name('leverancier', row[7]), 'fotolink':row[8]} for row in result]
                 return datalist
             case 'moederbord':
                 datalist = [{'id':row[0], 'naam': row[1], 'socket':row[2], 'ddr':row[3], 'gddr':row[4], 'stock':row[5],'prijs':row[6], 'leverancier':get_foreign_key_name('leverancier', row[7]), 'fotolink':row[8]} for row in result]
@@ -128,7 +128,7 @@ def info_catcher_in_dictionary(table, id=None):
                 datalist = [{'table':table, 'id':row[0], 'naam': row[1], 'clock':row[2], 'cores':row[3], 'socket':row[4], 'stock':row[5],'prijs':row[6], 'leverancier':get_foreign_key_name('leverancier', row[7])} for row in result if row[0] == id]
                 return datalist[0]
             case 'gpu':
-                datalist = [{'table':table, 'id':row[0], 'naam': row[1], 'clock':row[2], 'capaciteit':row[3], 'gddr':row[4], 'stock':row[5],'prijs':row[6], 'leverancier':get_foreign_key_name('leverancier', row[7])} for row in result if row[0] == id]
+                datalist = [{'table':table, 'id':row[0], 'naam': row[1], 'clock':row[2], 'vramcap':row[3], 'gddr':row[4], 'stock':row[5],'prijs':row[6], 'leverancier':get_foreign_key_name('leverancier', row[7])} for row in result if row[0] == id]
                 return datalist[0]
             case 'moederbord':
                 datalist = [{'table':table, 'id':row[0], 'naam': row[1], 'socket':row[2], 'ddr':row[3], 'gddr':row[4], 'stock':row[5],'prijs':row[6], 'leverancier':get_foreign_key_name('leverancier', row[7])} for row in result if row[0] == id]
@@ -207,9 +207,11 @@ def prebuilt_name_converter(prebuiltlist, buy=None):
                 else:
                     raise ValueError("Tuple is wrong length, check if the correct tuple was given")
             idlist = list(tup)
+            #print(idlist)
             idlist.pop(8)
+            #print(idlist)
             idlist.pop(2)
-            idlist.pop(0)
+            #print(idlist)
 
             tuplelist.append(idlist)
             newlist.append(tuple(tuplelist))
@@ -244,17 +246,36 @@ def prebuilt_name_converter(prebuiltlist, buy=None):
                         raise ValueError(f"Item index cannot be empty, errors in this list: {prebuiltlist}")
         else:
             raise TypeError(f"{prebuiltlist} is not a list, check if correct list is given")
-        print(newlist)
+        #print(newlist)
         return newlist
+    
+def check_existence(table, name=None, id=None, returntype="bool"):
+    acceptedreturnvalues = ["id", "bool"]
+    try:
+        conn = msql.connect(**dbDic)
+        if conn.is_connected():
+            cursor = conn.cursor()
+            if name is not None:
+                print(name, table)
+                sql = f'''SELECT * FROM {table} WHERE naam = "{name}"'''
+            if id is not None:
+                print(id, table)
+                if table in ('mom', 'moederbord', 'motherboard'):
+                    sql = f'''SELECT * FROM {table} WHERE momid = {id}'''
+                sql = f'''SELECT * FROM {table} WHERE {table}id = {id}'''
+            cursor.execute(sql)
+            result = cursor.fetchall()
+            if returntype == acceptedreturnvalues[0]:
+                return result[0][0]
+            elif returntype is acceptedreturnvalues[1]:
+                if result != None:
+                    return True
+                return False
+            else:
+                raise ValueError(f"The accepted return values are {acceptedreturnvalues}")
+    except Error as e:
+        print("Error while connecting to MySQL", e)
+    
 
 
 
-components = {
-    'cpu': info_catcher_in_dictionary('cpu'),
-    'gpu': info_catcher_in_dictionary('gpu'),
-    'ram': info_catcher_in_dictionary('ram'),
-    'psu': info_catcher_in_dictionary('psu'),
-    'storage': info_catcher_in_dictionary('opslag'),
-    'mom': info_catcher_in_dictionary('moederbord'),
-    'case': info_catcher_in_dictionary('behuizing')
-}

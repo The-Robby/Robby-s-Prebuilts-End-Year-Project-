@@ -90,8 +90,8 @@ def dashboard():
         prebuilt = df.prebuilt_name_converter(prebuiltlist)             #
         #---------------------------------------------------------------#
         #debug------------------#
-        #print(prebuiltlist)     #
-        #print(prebuilt)         #
+        print(prebuiltlist)     #
+        print(prebuilt)         #
         #-----------------------#
         # render dashboard based on admin or not----------------------------------------------------#
         if account['isadmin'] == 1:                                                                 #
@@ -111,9 +111,18 @@ def builder():
 @app.route('/get_options/<component>')
 def get_options(component):
     print('succesfully ran')
+    components = {
+    'cpu': df.info_catcher_in_dictionary('cpu'),
+    'gpu': df.info_catcher_in_dictionary('gpu'),
+    'ram': df.info_catcher_in_dictionary('ram'),
+    'psu': df.info_catcher_in_dictionary('psu'),
+    'storage': df.info_catcher_in_dictionary('opslag'),
+    'mom': df.info_catcher_in_dictionary('moederbord'),
+    'case': df.info_catcher_in_dictionary('behuizing')
+}
     # Fetch options for the specified component which has been passed on from the html
-    if component in df.components:
-        return jsonify(df.components[component])
+    if component in components:
+        return jsonify(components[component])
     else:
         return jsonify([])
     
@@ -152,7 +161,9 @@ def addtocartfromdash(prebuilt):
         # pass the 2 returned values on, first is a list, second is a float
         products = cartlist[0]
         totalprice = cartlist[1]
-
+        print(f'itemlist === {itemlist}')
+        print(f'cartlist === {cartlist}')
+        print(f'prebuilt === {prebuilt}')
         # we add all the items into the sessions cart
         account['cart'].extend(itemlist)
         # update the session 
@@ -249,6 +260,18 @@ def buy():
             #-----------------------------------------------------------------------------------------------------------------------------------------------#
     return render_template("builder.html", account=account, reviewcart=False, addtocart=False, buycart=True, products=products, totalprice=totalprice)
 
+@app.route("/deletecart")
+def deletecart():
+    if 'account' in session:
+        account = session['account']
+        if 'cart' in account:
+            account['cart'] = [] # empty the cart
+            # -------------update session---------------#
+            session['account'] = account                #
+            session.modified = True                     #
+            # ------------------------------------------#
+        return redirect(url_for('viewcart' or 'dashboard'))
+    return redirect(url_for('login'))
 #------------------------------------------------------------------------------------------DEBUG.HTML----------------------------------------------------------------------------------
 @app.route("/debug")
 def debug():
@@ -287,138 +310,46 @@ def profile():
 def additem():
     if 'account' in session:
         account = session['account']
+        table = request.args.get('table')
         # only render this html if you are admin
         if account['isadmin'] == 1:
             admin = True
-            # get the specified table and show options accordingly
-            table = request.args.get('table')
-            print(table)
-            match table:  # pythons match statement similair to c/c++/c# switch statement
-                case 'cpu':
-                    values = ''  # initialize 'values' string for sql querry
-                    if request.method == 'POST':
-                        # distinguish all types-------------------------#
-                        for key, value in request.form.items():         #
-                            # distinguish all strings---------------#   #
-                            if key in ('naam', 'clock', 'socket', 'fotolink'):  #   #
-                                values += '"' + value + '",'        #   #
-                            #---------------------------------------#   #
-                            # distinguish all numeric values----#       #
-                            else:                               #       #
-                                values += value                 #       #
-                                values += ','                   #       #
-                            #-----------------------------------#       #
-                        #-----------------------------------------------#
-                        # if string is empty abort to exclude errors
-                        if values != '':
-                            values = values.rstrip(",")  # strip the last comma to avoid errors
-                            df.inserDataIntoTable(table, 'Naam, Clock, Cores, Socket, Stock, Prijs, LeverancierID', values)  # add the 'values' string to the querry
-                            return render_template('additem.html', account=account, admin=admin, table=None)
-                    values = ''  # clear the string to exclude eny further errors
-                    return render_template('additem.html', account=account, admin=admin, table=table)
-                #  rinse and repeat
-                case 'gpu':
-                    print('gpu')
-                    values = ''
-                    if request.method == 'POST':
-                        for key, value in request.form.items(): 
-                            if key in ('naam', 'clock', 'vramcap', 'gddr', 'fotolink'): 
-                                values += '"' + value + '",'  
-                            else:
-                                values += value
-                                values += ','  
-                        if values != '':
-                            values = values.rstrip(",")
-                            df.inserDataIntoTable(table, 'Naam, Clock, VramCap, GDDR, Stock, Prijs, LeverancierID', values)
-                            return redirect(url_for('additem'))
-                    values = ''
-                    return render_template('additem.html', account=account, admin=admin, table=table)
-                
-                case 'ram':
-                    values = ''
-                    if request.method == 'POST':
-                        for key, value in request.form.items(): 
-                            if key in ('naam', 'clock', 'capaciteit', 'fotolink'): 
-                                values += '"' + value + '",' 
-                            else:
-                                values += value
-                                values += ','  
+            if request.method == 'POST':
+                items = {key : value for key, value in request.form.items()} #put all items with names and values inside dictionary
 
-                        if values != '':
-                            values = values.rstrip(",")
-                            df.inserDataIntoTable(table, 'Naam, Clock, Capaciteit, DDR, Stock, Prijs, LeverancierID', values)
-                            return render_template('additem.html', account=account, admin=admin, table=None)
-                    values = ''
-                    return render_template('additem.html', account=account, admin=admin, table=table)
-                
-                case 'psu':
-                    values = ''
-                    if request.method == 'POST':
-                        for key, value in request.form.items(): 
-                            if key in ('naam', 'fotolink'):  
-                                values += '"' + value + '",'  
-                            else:
-                                values += value
-                                values += ','  
-                        if values != '':
-                            values = values.rstrip(",")
-                            df.inserDataIntoTable(table, 'Naam, Watt, TypeID, Stock, Prijs, LeverancierID', values)
-                            return render_template('additem.html', account=account, admin=admin, table=None)
-                    values = ''
-                    return render_template('additem.html', account=account, admin=admin, table=table)
-                
-                case 'moederbord':
-                    values = ''
-                    if request.method == 'POST':
-                        for key, value in request.form.items(): 
-                            if key in ('naam', 'socket', 'gddr', 'fotolink'): 
-                                values += '"' + value + '",'  
-                            else:
-                                values += value
-                                values += ','  
+                # rename tables to correct names like in the database ------#
+                if table  in ('mom', 'storage', 'case'):                    # 
+                    if items['table'] == 'mom':                             #
+                        table = 'moederbord'    #---------------------------# this table has another table name
+                    elif items['table'] == 'storage':                       #
+                        table = 'opslag'                                    #
+                    elif items['table'] == 'case':                          #
+                        table = 'behuizing'                                 #
+                #-----------------------------------------------------------#
 
-                        if values != '':
-                            values = values.rstrip(",")
-                            df.inserDataIntoTable(table, 'Naam, Socket, DDR, GDDR, Stock, Prijs, LeverancierID', values)
-                            return render_template('additem.html', account=account, admin=admin, table=None)
-                    values = ''
-                    return render_template('additem.html', account=account, admin=admin, table=table)
+                stringitems = [item for item in items if item in ('naam','afmetingen','fotolink','capaciteit','socket','gddr','clock','vramcap')] # create a list of keys wich value needs to be a string type
+                idstringitems = [item for item in items if item in ('leverancier', 'type')] # again for the id names
 
-                case 'opslag':
-                    values = ''
-                    if request.method == 'POST':
-                        for key, value in request.form.items(): 
-                            if key in ('naam', 'capaciteit', 'fotolink'):  
-                                values += '"' + value + '",'  
-                            else:
-                                values += value
-                                values += ','  
-
-                        if values != '':
-                            values = values.rstrip(",")
-                            df.inserDataIntoTable(table, 'Naam, TypeID, Capaciteit, Stock, Prijs, LeverancierID', values)
-                            return render_template('additem.html', account=account, admin=admin, table=None)
-                    values = ''
-                    return render_template('additem.html', account=account, admin=admin, table=table)
-                
-                case 'behuizing':
-                    values = ''
-                    if request.method == 'POST':
-                        for key, value in request.form.items(): 
-                            if key in ('naam', 'afmetingen', 'fotolink'):  
-                                values += '"' + value + '",'  
-                            else:
-                                values += value
-                                values += ','  
-
-                        if values != '':
-                            values = values.rstrip(",")
-                            df.inserDataIntoTable(table, 'Naam, AantalFans, Afmetingen, Stock, Prijs, LeverancierID', values)
-                            return render_template('additem.html', account=account, admin=admin, table=None)
-                    values = ''
-                    return render_template('additem.html', account=account, admin=admin, table=table)
-
-            return render_template('additem.html', account=account, admin=admin, table=None)
+                # create the values as 1 string ----------------------------#
+                values = ''                                                 #
+                keys = ''                                                   #
+                for key, value in items.items():                            #
+                    if key in (stringitems):                                #
+                        values += '"' + value + '",'                        #
+                    else:                                                   #
+                        values += value                                     #
+                        values += ','                                       #
+                    if key in (idstringitems):                              #
+                        keys += f'{key}id,'                                 #
+                    else:                                                   #
+                        keys += f'{key},'                                   #
+                # and finally pass them to the dedicated function handling the update event-----#
+                if values != '':                                                                #
+                    values = values.rstrip(",")                                                 #
+                    keys = keys.rstrip(",")                                                     #
+                    df.inserDataIntoTable(table, keys, values)                                  # 
+                # ------------------------------------------------------------------------------# 
+            return render_template('additem.html', account=account, admin=admin, table=table)
         else:
             redirect(url_for('login'))
     return redirect(url_for('login'))
@@ -431,7 +362,9 @@ def updateitem():
         if account['isadmin'] == 1:
             admin = True
             if request.method == 'POST':
+
                 items = {key : value for key, value in request.form.items()} #put all items with names and values inside dictionary
+
                 # get id and remove it from dictionary afterwards-------#
                 pkid = items.get('id')                                  #
                 items.pop('id')                                         #
@@ -450,21 +383,23 @@ def updateitem():
                         table = 'behuizing'                                 #
                 items.pop('table')                                          # and remove it afterwards
                 #-----------------------------------------------------------#
-
-                #-These will be handled eventually, now they are removed----#
-                if 'leverancier' in items:                                  #
-                    items.pop('leverancier')                                #
-                if 'type' in items:                                         #
-                    items.pop('type')                                       #
-                #-----------------------------------------------------------#
-
+                
                 stringitems = [item for item in items if item in ('naam','afmetingen','fotolink','capaciteit','socket','gddr','clock','vramcap')] # create a list of keys wich value needs to be a string type
+                idstringitems = [item for item in items if item in ('leverancier', 'type')] # again for the id names
 
                 # create the values as 1 string ----------------------------#
                 values = ''                                                 #
                 for key, value in items.items():                            #
                     if key in (stringitems):                                #
                         values += key + ' = ' + '"' + value + '",'          #
+                    elif key in (idstringitems):
+                        #if value returned full it means it exists and then check for that id in that table
+                        if df.check_existence(key, name=value, returntype="bool"):
+                            name_pk = str(df.check_existence(key, name=value, returntype="id"))
+                            if isinstance(name_pk, str):
+                                values += key + 'id = ' + name_pk + ','
+                            else:
+                                raise TypeError(f"name_pk({name_pk}) is not a string")
                     else:                                                   #
                         values += key + ' = ' + value                       #
                         values += ','                                       #
@@ -473,7 +408,7 @@ def updateitem():
                     values = values.rstrip(",")                                                 #
                     print(values)                                                               #
                     if table == 'moederbord':                                                   #
-                        df.update_prebuiltDB(table, values, f'{pkname}id = {pkid}')             #
+                        df.update_prebuiltDB(table, values, f'{pkname} = {pkid}')               #
                     else:                                                                       #
                         df.update_prebuiltDB(table, values, f'{table}id = {pkid}')              #
                 # ------------------------------------------------------------------------------# 
