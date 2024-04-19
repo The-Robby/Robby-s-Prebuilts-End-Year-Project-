@@ -90,8 +90,8 @@ def dashboard():
         prebuilt = df.prebuilt_name_converter(prebuiltlist)             #
         #---------------------------------------------------------------#
         #debug------------------#
-        print(prebuiltlist)     #
-        print(prebuilt)         #
+        #print(prebuiltlist)     #
+        #print(prebuilt)         #
         #-----------------------#
         # render dashboard based on admin or not----------------------------------------------------#
         if account['isadmin'] == 1:                                                                 #
@@ -110,7 +110,7 @@ def builder():
 
 @app.route('/get_options/<component>')
 def get_options(component):
-    print('succesfully ran')
+    #print('succesfully ran')
     components = {
     'cpu': df.info_catcher_in_dictionary('cpu'),
     'gpu': df.info_catcher_in_dictionary('gpu'),
@@ -161,9 +161,9 @@ def addtocartfromdash(prebuilt):
         # pass the 2 returned values on, first is a list, second is a float
         products = cartlist[0]
         totalprice = cartlist[1]
-        print(f'itemlist === {itemlist}')
-        print(f'cartlist === {cartlist}')
-        print(f'prebuilt === {prebuilt}')
+        #print(f'itemlist === {itemlist}')
+        #print(f'cartlist === {cartlist}')
+        #print(f'prebuilt === {prebuilt}')
         # we add all the items into the sessions cart
         account['cart'].extend(itemlist)
         # update the session 
@@ -406,7 +406,7 @@ def updateitem():
                 # and finally pass them to the dedicated function handling the update event-----#
                 if values != '':                                                                #
                     values = values.rstrip(",")                                                 #
-                    print(values)                                                               #
+                    #print(values)                                                               #
                     if table == 'moederbord':                                                   #
                         df.update_prebuiltDB(table, values, f'{pkname} = {pkid}')               #
                     else:                                                                       #
