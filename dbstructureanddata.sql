@@ -45,7 +45,7 @@ CREATE TABLE `behuizing` (
 
 LOCK TABLES `behuizing` WRITE;
 /*!40000 ALTER TABLE `behuizing` DISABLE KEYS */;
-INSERT INTO `behuizing` VALUES (1,'Obsidian 1000D',4,'100x100x40',38,149.99,1,'https://tweakers.net/i/T_ExRH7dyARulcwakGjwRJsqHPs=/fit-in/656x/filters:strip_exif()/i/2001967595.png?f=imagenormal');
+INSERT INTO `behuizing` VALUES (1,'Obsidian 1000D',4,'100x100x40',36,149.99,1,'https://tweakers.net/i/T_ExRH7dyARulcwakGjwRJsqHPs=/fit-in/656x/filters:strip_exif()/i/2001967595.png?f=imagenormal');
 /*!40000 ALTER TABLE `behuizing` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -78,7 +78,7 @@ CREATE TABLE `cpu` (
 
 LOCK TABLES `cpu` WRITE;
 /*!40000 ALTER TABLE `cpu` DISABLE KEYS */;
-INSERT INTO `cpu` VALUES (1,'i9-13900K','5,2GHz',24,'1700',23,675.95,2,'https://www.alternate.be/p/600x600/7/7/Intel__Core_i9_13900K__3_0_GHz__5_8_GHz_Turbo_Boost__socket_1700_processor@@1865277.jpg'),(2,'i9-14900K','6,0GHz',24,'1700',9,639,2,'https://azerty.nl/media/catalog/product/0/o/0okyo5.5283778_15fb3ae0fc9358f026631170abc11d0a-43235351_1.jpg?quality=80&bg-color=255,255,255&fit=bounds&height=700&width=700&canvas=700:700'),(3,'i7-14700K','5,6 GHz',20,'1700',4,459,2,'https://www.alternate.be/p/600x600/5/7/Intel__Core_i7_14700K__3_4_GHz__5_6_GHz_Turbo_Boost__socket_1700_processor@@100009775.jpg');
+INSERT INTO `cpu` VALUES (1,'i9-13900K','5,2GHz',24,'1700',21,675.95,2,'https://barakacomputer.net/wp-content/uploads/2023/12/13900k.webp'),(2,'i9-14900K','6,0GHz',24,'1700',9,639,2,'https://esp-tech.com/cdn/shop/files/23-057-UNIV-K-N13840_1200x1200.png?v=1698086888'),(3,'i7-14700K','5,6 GHz',20,'1700',4,459,2,'https://tweakers.net/i/IUBEdypgH1XHLOrXCeAZBuYGils=/fit-in/656x/filters:strip_exif()/i/2006164056.png?f=imagenormal');
 /*!40000 ALTER TABLE `cpu` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -111,7 +111,7 @@ CREATE TABLE `gpu` (
 
 LOCK TABLES `gpu` WRITE;
 /*!40000 ALTER TABLE `gpu` DISABLE KEYS */;
-INSERT INTO `gpu` VALUES (1,'Nvidia GeForce RTX 4080','2535 MHz','16GB','6X',21,1479,6,'https://www.nvidia.com/content/dam/en-zz/Solutions/geforce/news/geforce-rtx-40-series-ultra-efficient-beyond-fast/nvidia-geforce-rtx-4080-ogimage.png'),(2,'Arc A770 CL 16GO','2150 MHz','16GB','6',61,420.99,2,'https://i5.walmartimages.com/asr/84688cb7-74a7-40bf-bc4f-cdbd24cac60d.257b6e8a5ce7d167aa328396039a02d8.jpeg?odnHeight=768&odnWidth=768&odnBg=FFFFFF'),(3,'GeForce RTX 4090','2520 MHz','24GB','6X',10,1999,6,'https://images.nvidia.com/aem-dam/Solutions/geforce/ada/news/rtx-40-series-graphics-cards-announcements/geforce-rtx-4090-product-photo-002-850px.png');
+INSERT INTO `gpu` VALUES (1,'Nvidia GeForce RTX 4080','2535 MHz','16GB','6X',19,1479,6,'https://www.nvidia.com/content/dam/en-zz/Solutions/geforce/news/geforce-rtx-40-series-ultra-efficient-beyond-fast/nvidia-geforce-rtx-4080-ogimage.png'),(2,'Arc A770 CL 16GO','2150 MHz','16GB','6',61,420.99,2,'https://www.asrock.com/Graphics-Card/photo/Intel%20Arc%20A770%20Challenger%2016GB%20OC(M1).png'),(3,'GeForce RTX 4090','2520 MHz','24GB','6X',10,1999,6,'https://images.nvidia.com/aem-dam/Solutions/geforce/ada/news/rtx-40-series-graphics-cards-announcements/geforce-rtx-4090-product-photo-002-850px.png');
 /*!40000 ALTER TABLE `gpu` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -168,7 +168,7 @@ CREATE TABLE `moederbord` (
 
 LOCK TABLES `moederbord` WRITE;
 /*!40000 ALTER TABLE `moederbord` DISABLE KEYS */;
-INSERT INTO `moederbord` VALUES (1,'ROG STRIX B760-F GAMING','1700',5,'6X',4,269,4,'https://media.ldlc.com/r1600/ld/products/00/06/00/31/LD0006003137.jpg');
+INSERT INTO `moederbord` VALUES (1,'ROG STRIX B760-F GAMING','1700',5,'6X',2,269,4,'https://dlcdnwebimgs.asus.com/gain/69159885-AADB-444B-B17B-C1809F91A343/w250');
 /*!40000 ALTER TABLE `moederbord` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -202,7 +202,7 @@ CREATE TABLE `opslag` (
 
 LOCK TABLES `opslag` WRITE;
 /*!40000 ALTER TABLE `opslag` DISABLE KEYS */;
-INSERT INTO `opslag` VALUES (1,'990 Pro',1,'2TB',-4,190,5,'https://images.samsung.com/is/image/samsung/p6pim/be/mz-v9p2t0bw/gallery/be-990pro-nvme-m2-ssd-mz-v9p2t0bw-533691431?$650_519_PNG$');
+INSERT INTO `opslag` VALUES (1,'990 Pro',1,'2TB',12,190,5,'https://images.samsung.com/is/image/samsung/p6pim/be/mz-v9p2t0bw/gallery/be-990pro-nvme-m2-ssd-mz-v9p2t0bw-533691431?$650_519_PNG$');
 /*!40000 ALTER TABLE `opslag` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -281,7 +281,7 @@ CREATE TABLE `psu` (
 
 LOCK TABLES `psu` WRITE;
 /*!40000 ALTER TABLE `psu` DISABLE KEYS */;
-INSERT INTO `psu` VALUES (1,'RM1000e V2 PSU',1000,2,19,144.9,1,'https://cdn.webshopapp.com/shops/330902/files/447022154/1500x1500x2/corsair-corsair-rm1000e-v2-psu-pc-voeding.jpg');
+INSERT INTO `psu` VALUES (1,'RM1000e V2 PSU',1000,2,16,144.9,1,'https://assets.corsair.com/image/upload/f_auto/q_auto/v1680204879/products/Power-Supply-Units/base-rme-series-2023-psu-config/Content/RM1000e_ATX3_image.png');
 /*!40000 ALTER TABLE `psu` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -314,7 +314,7 @@ CREATE TABLE `ram` (
 
 LOCK TABLES `ram` WRITE;
 /*!40000 ALTER TABLE `ram` DISABLE KEYS */;
-INSERT INTO `ram` VALUES (1,'Vengeance','4000MHz','16GB',4,28,99.8,1,'https://www.bytesatwork.be/media/catalog/product/cache/926ec4834e42ffe6a495cf71ebadeb46/1/2/1299153_3_6.jpg'),(2,'Vengeance','6800MHz','32GB',5,23,152.9,1,'https://assets.corsair.com/image/upload/c_pad,q_auto,h_1024,w_1024,f_auto/products/Memory/vengeance-ddr5-blk-config/Gallery/VENGEANCE_DDR5_BLK_01_2up.webp');
+INSERT INTO `ram` VALUES (1,'Vengeance','4000MHz','16GB',4,28,99.8,1,'https://tweakers.net/i/vumoBZGZf4ogrHCfUSB1NKBrjxI=/i/2003077380.png'),(2,'Vengeance','6800MHz','32GB',5,21,152.9,1,'https://assets.corsair.com/image/upload/c_pad,q_auto,h_1024,w_1024,f_auto/products/Memory/vengeance-ddr5-blk-config/Gallery/VENGEANCE_DDR5_BLK_01_2up.webp');
 /*!40000 ALTER TABLE `ram` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -368,7 +368,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (18,'admin','a15a80a3d51b2d4fef427803191341bee161377dc63242b305414bdeb079b72b','Admin','AdminStreet',85565.7,1,'9²tÂ»üÅ:N\'\Z÷ÈzxÜmèc°Þ'),(19,'robbyvgaming','7a0c62479b7264d99d400181518afca60cb2d1a874a63caaf8e07c15f58b5750','Robbert Groffi','Halingenstraat 32, Velm 3806',918,0,']TzK×Y2^è¼mÄ	¦õg»Ô²ÖÔY¶'),(20,'victoria','45027579fbb86c7982ca78d43667ef3c7f0c7818410ff8abb10af20a4ea1f745','Victoria Crauwels','Neger is de poepstraat 32',NULL,0,'¸hÞñÙÄµÈ9%kø¥Ëçz&/¶Ã\0äg%N');
+INSERT INTO `user` VALUES (18,'admin','a15a80a3d51b2d4fef427803191341bee161377dc63242b305414bdeb079b72b','Admin','AdminStreet',89152.3,1,'9²tÂ»üÅ:N\'\Z÷ÈzxÜmèc°Þ'),(19,'robbyvgaming','7a0c62479b7264d99d400181518afca60cb2d1a874a63caaf8e07c15f58b5750','Robbert Groffi','Halingenstraat 32, Velm 3806',918,0,']TzK×Y2^è¼mÄ	¦õg»Ô²ÖÔY¶'),(20,'victoria','45027579fbb86c7982ca78d43667ef3c7f0c7818410ff8abb10af20a4ea1f745','Victoria Crauwels','Neger is de poepstraat 32',NULL,0,'¸hÞñÙÄµÈ9%kø¥Ëçz&/¶Ã\0äg%N');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -381,4 +381,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-19 16:55:52
+-- Dump completed on 2024-04-22 15:46:37
