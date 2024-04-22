@@ -64,6 +64,10 @@
             <p>Total price: ${{ totalprice }}</p>
             {% if products != () %}
             <a href="buy">Buy!</a>
+            {% if nobuy %}
+            <fail>It seems one or more products are out of stock, check if all the items are in stock</fail>
+            <button>Ask for stock</button>
+            {% endif %}
             <a onclick="showOverlay('none')">Push your cart down the ditch</a>
             {% endif %}
         </div>

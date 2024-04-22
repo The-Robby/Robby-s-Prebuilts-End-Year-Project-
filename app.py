@@ -220,6 +220,9 @@ def buy():
     if 'account' in session:
         account = session['account']
         if account['cart'] != []: # cant buy an empty cart
+            nobuy = False
+            reviewcart = False
+            buycart = True
             # ---------------------------variables----------------------------------------------------------------------------------------------#
             table = 'user'  # table will always be user                                                                                         #
             cart = account['cart']  # get the sessions car in a local variable for readability                                                  #
@@ -233,29 +236,41 @@ def buy():
             if moneyspent is None:                                                      #
                 moneyspent = 0                                                          #
             # --------------------------------------------------------------------------#
-                
-            totalmoneyspent = totalprice + moneyspent  # get the total price value in int
-            account['cart'] = []  # empty the cart
-            account['uitgegeven'] = totalmoneyspent  # update users total money spent in local variable of the session
-
-            # -------------update session---------------#
-            session['account'] = account                #
-            session.modified = True                     #
-            # ------------------------------------------#
 
             #------------------update database--------------------------------------------------------------------------------------------------------------#
-            df.update_prebuiltDB(table, f'uitgegeven = {totalmoneyspent}', f'userid = {account["id"]}')  # update the databases user total money spent      #
             idlist = [(id['id'], id['table']) for id in cart]  # finally declare a list of id's and table names to update stock                             #
             if idlist != []:                                                                                                                                #
                 for id, idtable in idlist:   # ittirate over the list                                                                                       #
-                    # ----------------update stock values with one less then before---------------#                                                         #
-                    if idtable == 'moederbord':                                                   #                                                         #
-                        df.update_prebuiltDB(idtable, 'stock = stock - 1', f'momid = {id}')       #                                                         #
-                    else:                                                                         #                                                         #
-                        df.update_prebuiltDB(idtable, 'stock = stock - 1', f'{idtable}id = {id}') #                                                         #
-                    # ----------------------------------------------------------------------------#                                                         #
+                    stock = int(df.info_catcher_in_dictionary(idtable, id)['stock'])                                                                        #
+                    # ----------------update stock values with one less then before---------------------#                                                   #
+                    if idtable == 'moederbord':                                                         #                                                   #
+                        if stock > 0:                                                                   #                                                   #
+                            df.update_prebuiltDB(idtable, 'stock = stock - 1', f'momid = {id}')         #                                                   #
+                        else:                                                                           #                                                   #
+                            nobuy = True                                                                #                                                   #
+                            buycart = False                                                             #                                                   #
+                            reviewcart = True                                                           #                                                   #
+                    else:                                                                               #                                                   #
+                        if stock > 0:                                                                   #                                                   #
+                            df.update_prebuiltDB(idtable, 'stock = stock - 1', f'{idtable}id = {id}')   #                                                   #
+                        else:                                                                           #                                                   #
+                            nobuy = True                                                                #                                                   #
+                            buycart = False                                                             #                                                   #
+                            reviewcart = True                                                           #                                                   #
+                    # ----------------------------------------------------------------------------------#                                                   #
+                if nobuy == False:                                                                                                                          #
+                    totalmoneyspent = totalprice + moneyspent  # get the total price value in int                                                           #
+                    account['cart'] = []  # empty the cart                                                                                                  #
+                    account['uitgegeven'] = totalmoneyspent  # update users total money spent in local variable of the session                              #
+                    # -------------update session---------------#                                                                                           #
+                    session['account'] = account                #                                                                                           #
+                    session.modified = True                     #                                                                                           #
+                    # ------------------------------------------#                                                                                           #
+                    buycart = True                                                                                                                          #
+                    reviewcart = False                                                                                                                      #
+                    df.update_prebuiltDB(table, f'uitgegeven = {totalmoneyspent}', f'userid = {account["id"]}')                                             # update the databases user total money spent
             #-----------------------------------------------------------------------------------------------------------------------------------------------#
-    return render_template("builder.html", account=account, reviewcart=False, addtocart=False, buycart=True, products=products, totalprice=totalprice)
+    return render_template("builder.html", account=account, reviewcart=reviewcart, addtocart=False, buycart=buycart, products=products, totalprice=totalprice, nobuy=nobuy)
 
 @app.route("/deletecart")
 def deletecart():
