@@ -441,9 +441,28 @@
             var overlay = document.getElementById("overlay");
             overlay.style.display = "block";
             var messageParagraph = document.querySelector(".dialog-box p");
+
+            var existingImg = document.querySelector(".dialog-box img");
+            if (existingImg) {
+                existingImg.remove();
+            }
+            
             if (item == 'none') {
                 var okButton = document.getElementById("okButton");
                 messageParagraph.textContent = "Are you willing to abandon your cart in the ditch?";
+
+                // Create the image element
+                var img = document.createElement("img");
+                img.src = "https://i.makeagif.com/media/8-19-2021/rvq_CL.gif";
+                img.alt = "Animated Banner";
+                img.style.maxWidth = "100%"; // Ensure image fits within dialog box
+                img.style.display = "block"; // Set display to block for centering
+                img.style.margin = "0 auto 20px"; // Center horizontally and add margin below
+
+                // Append the image to the dialog box
+                var dialogBox = document.querySelector(".dialog-box");
+                dialogBox.insertBefore(img, okButton); // Insert before the OK button
+
                 okButton.onclick = function() {
                     window.location.href ="/deletecart"; 
                 };
