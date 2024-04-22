@@ -4,6 +4,15 @@ from mysql.connector import Error
 from config import dbDic
 
 def inserDataIntoTable(table, columnnames, values):
+    """
+    insert data into any table in database
+
+    parameters: table (what table in database)(str)
+                columnnames (give column names seperated by comma in 1 string)
+                values (give the corresponding values based on their column name)(str, int...)
+    
+    Returns: nothing, if error, check terminal
+    """
     try:
         conn = msql.connect(**dbDic) 
         if conn.is_connected():
@@ -16,30 +25,36 @@ def inserDataIntoTable(table, columnnames, values):
         print("Error while connecting to MySQL", e)
 
 def getDataFromTable(table, where=None):
-    if where is None:
-        try:
-            conn = msql.connect(**dbDic)
-            if conn.is_connected():
-                cursor = conn.cursor()
+    """
+    gets everything from the database from the given table, if where is used it checks on conditions
+
+    parameters: table (in what table from database)(str)
+
+    returns: list of dictionaries (all data from given table)
+        if where: a list of evry column or list of dictionary based on your where condition
+    """
+    try:
+        conn = msql.connect(**dbDic)
+        if conn.is_connected():
+            cursor = conn.cursor()
+            if where is None:
                 sql = f'''SELECT * FROM {table}'''
-                cursor.execute(sql)
-                result = cursor.fetchall()
-                return result
-        except Error as e:
-            print("Error while connecting to MySQL", e)
-    else:
-        try:
-            conn = msql.connect(**dbDic)
-            if conn.is_connected():
-                cursor = conn.cursor()
+            else:
                 sql = f'''SELECT * FROM {table} WHERE {where}'''
-                cursor.execute(sql)
-                result = cursor.fetchall()
-                return result
-        except Error as e:
-            print("Error while connecting to MySQL", e)
+            cursor.execute(sql)
+            result = cursor.fetchall()
+            return result
+    except Error as e:
+        print("Error while connecting to MySQL", e)
 
 def get_prebuilt_price(prebuiltid):
+    """
+    gets the total price of the prebuilt
+
+    parameters: prebuiltid (the id of the given prebuilt)(int)
+
+    returns: totalprice in float
+    """
     try:
         conn = msql.connect(**dbDic)
         if conn.is_connected():
@@ -53,6 +68,15 @@ def get_prebuilt_price(prebuiltid):
         return None  # Return None in case of an error
     
 def update_prebuiltDB(table, set_updated_values, set_conditions):
+    """
+    update given item in database
+
+    parameters: table (which database talbe)(str)
+                set_updated_values (column_name = {value})(str)
+                where (for giving the specific ID)(str)
+
+    return:     nothing (if error, check terminal)
+    """
     try:
         conn = msql.connect(**dbDic) 
         if conn.is_connected():
@@ -66,6 +90,13 @@ def update_prebuiltDB(table, set_updated_values, set_conditions):
         print("Error while connecting to MySQL", e)
 
 def get_foreign_key_name(table, fk):
+    """
+    Finds the name of a a foreign key, canbe used also to find just the name.
+
+    parameters: table (for in what table we want to find the name)(str)
+
+    returns: the name, not sure if in string or in list or something, i think list
+    """
     if table != 'moederbord':
         try:
             conn = msql.connect(**dbDic)
@@ -90,6 +121,15 @@ def get_foreign_key_name(table, fk):
             print("Error while connecting to MySQL", e)
 
 def info_catcher_in_dictionary(table, id=None):
+    """
+    Catches everything from the given table and if the id is given it returns only 1 row
+
+    parameters: table (in which table are we gonna check)(str)
+                id (for what item we specifically want the data)(int)
+
+    returns: all item data inside either a list of dictionary (when 2 or more items are returned)
+            or a dictionary itself if only 1 item is returned (when id is given)
+    """
     result = getDataFromTable(table)
     if id is None:
         match table:
@@ -149,6 +189,13 @@ def info_catcher_in_dictionary(table, id=None):
                 str = f''
 
 def make_cart(itemlistdict):
+    """
+    Takes a list of dictionaries to turn it into a list of only names and the total price. Is used to make the cart visually look better
+
+    Parameters: itemlistdict (a list containing all dictionaries of items returned from the database)(list[dict])
+
+    returns: a list of names and totalprice
+    """
     list_of_names = [dict['leverancier'] + ' ' + dict['naam'] + ' $' + str(round(dict['prijs'], 2)) for dict in itemlistdict]
     totalprice = 0
     for dict in itemlistdict:
@@ -156,6 +203,14 @@ def make_cart(itemlistdict):
     return list_of_names, round(totalprice, 2)
 
 def string_to_int_list(input_str):
+    """this function will convert a string in to a list of id's. 
+        Is only used when a list of id's is returned from the html. 
+        This results in it being a string, therefore this function.
+
+        Parameters: string (list of ID's disguised as string)("[1,2,3,4,2,1]" --> [1,2,3,4,2,1])
+
+        Returns: List containing all ID's
+    """
     try:
         # Using ast.literal_eval to safely evaluate the string as a Python literal
         int_list = ast.literal_eval(input_str)
@@ -167,6 +222,14 @@ def string_to_int_list(input_str):
         return None
 
 def prebuilt_name_converter(prebuiltlist, buy=None):
+    """this function takes every column returned from the database (which are all FK ID's)
+        and converts them into tuples of their name and ID.
+
+        Parameters: Prebuiltlist (which is the list containing every column in the database from the table (prebuilt) of one PK)(list[pk,fk,fk,fk,fk,fk,fotolink...])
+                    buy (default is none and will return the list of tuples, in front is total price, in the back is IDlist) (str = "buy")
+        
+        Returns: tuple list of name and pk but if buy= buy it returns a list of tuples but only the parts
+    """
     if buy == None or buy != 'buy':
         newlist = []
         for tup in prebuiltlist:
@@ -250,6 +313,17 @@ def prebuilt_name_converter(prebuiltlist, buy=None):
         return newlist
     
 def check_existence(table, name=None, id=None, returntype="bool"):
+    """
+    This function checks if something exists in the database.
+
+    Parameters: Table (in which table do we want to check)(str)
+                name (if only the name is known)(str)
+                ID (if only PK is known)(int)
+                ReturnType (you can choose what you want as returntype, default is bool)(str)
+        
+    Returns: Bool (true if exists, false if not found)
+            ID (Returns int of PK id, possible error when item doesnt exist)
+    """
     acceptedreturnvalues = ["id", "bool"]
     try:
         conn = msql.connect(**dbDic)
@@ -272,7 +346,7 @@ def check_existence(table, name=None, id=None, returntype="bool"):
                     return True
                 return False
             else:
-                raise ValueError(f"The accepted return values are {acceptedreturnvalues}")
+                raise ValueError(f"The accepted return values are {acceptedreturnvalues}, if you are sure you have the right accepted value, check if the item exists first")
     except Error as e:
         print("Error while connecting to MySQL", e)
     

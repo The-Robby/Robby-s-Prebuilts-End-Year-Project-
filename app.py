@@ -161,9 +161,6 @@ def addtocartfromdash(prebuilt):
         # pass the 2 returned values on, first is a list, second is a float
         products = cartlist[0]
         totalprice = cartlist[1]
-        #print(f'itemlist === {itemlist}')
-        #print(f'cartlist === {cartlist}')
-        #print(f'prebuilt === {prebuilt}')
         # we add all the items into the sessions cart
         account['cart'].extend(itemlist)
         # update the session 
