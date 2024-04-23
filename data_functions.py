@@ -293,11 +293,11 @@ def prebuilt_name_converter(prebuiltlist, buy=None):
                 else:
                     raise ValueError("Tuple is wrong length, check if the correct tuple was given")
             idlist = list(tup)
-            #print(idlist)
+
+            # POP IDLIST
             idlist.pop(8)
-            #print(idlist)
+            # POP URL
             idlist.pop(2)
-            #print(idlist)
 
             tuplelist.append(idlist)
             newlist.append(tuple(tuplelist))
@@ -332,7 +332,7 @@ def prebuilt_name_converter(prebuiltlist, buy=None):
                         raise ValueError(f"Item index cannot be empty, errors in this list: {prebuiltlist}")
         else:
             raise TypeError(f"{prebuiltlist} is not a list, check if correct list is given")
-        #print(newlist)
+
         return newlist
     
 def check_existence(table, name=None, id=None, returntype="bool"):
@@ -353,10 +353,8 @@ def check_existence(table, name=None, id=None, returntype="bool"):
         if conn.is_connected():
             cursor = conn.cursor()
             if name is not None:
-                print(name, table)
                 sql = f'''SELECT * FROM {table} WHERE naam = "{name}"'''
             if id is not None:
-                print(id, table)
                 if table in ('mom', 'moederbord', 'motherboard'):
                     sql = f'''SELECT * FROM {table} WHERE momid = {id}'''
                 sql = f'''SELECT * FROM {table} WHERE {table}id = {id}'''
@@ -365,7 +363,6 @@ def check_existence(table, name=None, id=None, returntype="bool"):
             if returntype == acceptedreturnvalues[0]:
                 return result[0][0]
             elif returntype is acceptedreturnvalues[1]:
-                print(result)
                 if result != []:
                     return True
                 return False
