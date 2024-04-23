@@ -318,24 +318,43 @@ def profile():
     return render_template("profile-info.html", account=account, adres=adres, username=username, name=name, spent=spent)
 
 # -----------------------------------------------------------------------------------------ADDITEM.HTML--------------------------------------------------------------------------------
+@app.route('/deleteitem/<table>/<itemid>', methods=['GET','POST'])
+def deleteitem(table, itemid):
+    if 'account' in session:
+        account = session['account']
+        if account['isadmin'] == 1:
+            # rename tables to correct names like in the database ------#
+            if table  in ('mom', 'storage', 'case'):                    # 
+                if table == 'mom':                                      #
+                    table = 'moederbord'    #---------------------------# this table has another table name
+                elif table == 'storage':                                #
+                    table = 'opslag'                                    #
+                elif table == 'case':                                   #
+                    table = 'behuizing'                                 #
+            #-----------------------------------------------------------#
+            df.deleteDataFromTable(table, itemid)
+        return redirect(url_for('updateitem'))
+    return redirect(url_for('login'))
+
+
 @app.route('/additem', methods=['GET', 'POST'])
 def additem():
     if 'account' in session:
         account = session['account']
-        table = request.args.get('table')
+        table = request.form.get('table')
         # only render this html if you are admin
         if account['isadmin'] == 1:
             admin = True
             if request.method == 'POST':
-                items = {key : value for key, value in request.form.items()} #put all items with names and values inside dictionary
+                items = {key : value for key, value in request.form.items() if key != 'table'} #put all items with names and values inside dictionary
 
                 # rename tables to correct names like in the database ------#
                 if table  in ('mom', 'storage', 'case'):                    # 
-                    if items['table'] == 'mom':                             #
+                    if table == 'mom':                                      #
                         table = 'moederbord'    #---------------------------# this table has another table name
-                    elif items['table'] == 'storage':                       #
+                    elif table == 'storage':                                #
                         table = 'opslag'                                    #
-                    elif items['table'] == 'case':                          #
+                    elif table == 'case':                                   #
                         table = 'behuizing'                                 #
                 #-----------------------------------------------------------#
 
@@ -348,6 +367,16 @@ def additem():
                 for key, value in items.items():                            #
                     if key in (stringitems):                                #
                         values += '"' + value + '",'                        #
+                    elif key in (idstringitems):
+                        if df.check_existence(key, name=value):
+                            primary_key = str(df.check_existence(key, name=value, returntype="id"))
+                            values += primary_key + ','
+                        else:
+                            str_value = '"' + value + '"'
+                            df.inserDataIntoTable(key, "naam", str_value)
+                            if df.check_existence(key, name=value):
+                                primary_key = str(df.check_existence(key, name=value, returntype="id"))
+                                values += primary_key + ','
                     else:                                                   #
                         values += value                                     #
                         values += ','                                       #
@@ -361,7 +390,7 @@ def additem():
                     keys = keys.rstrip(",")                                                     #
                     df.inserDataIntoTable(table, keys, values)                                  # 
                 # ------------------------------------------------------------------------------# 
-            return render_template('additem.html', account=account, admin=admin, table=table)
+            return redirect(url_for('updateitem'))
         else:
             redirect(url_for('login'))
     return redirect(url_for('login'))

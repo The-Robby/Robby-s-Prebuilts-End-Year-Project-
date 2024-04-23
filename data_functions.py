@@ -24,6 +24,29 @@ def inserDataIntoTable(table, columnnames, values):
     except Error as e:
         print("Error while connecting to MySQL", e)
 
+def deleteDataFromTable(table, value):
+    """
+    deletes data from any table in database
+
+    parameters: table (what table in database)(str)
+                value (give the right id)(int)
+    
+    Returns: nothing, if error, check terminal
+    """
+    try:
+        conn = msql.connect(**dbDic) 
+        if conn.is_connected():
+            cursor = conn.cursor()
+            if table == 'moederbord':
+                query = f'''DELETE FROM {table} WHERE momid = {value};'''
+            else:
+                query = f'''DELETE FROM {table} WHERE {table}id = {value};'''
+            cursor.execute(query)
+            conn.commit()
+            conn.close()
+    except Error as e:
+        print("Error while connecting to MySQL", e)
+
 def getDataFromTable(table, where=None):
     """
     gets everything from the database from the given table, if where is used it checks on conditions
@@ -342,7 +365,8 @@ def check_existence(table, name=None, id=None, returntype="bool"):
             if returntype == acceptedreturnvalues[0]:
                 return result[0][0]
             elif returntype is acceptedreturnvalues[1]:
-                if result != None:
+                print(result)
+                if result != []:
                     return True
                 return False
             else:

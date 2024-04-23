@@ -58,6 +58,26 @@
     </div>
     <span class="refresh-symbol" onclick="populateTable()">↻</span>
 
+
+            <!-- Add a link to trigger add item overlay -->
+        <a id="addItemLink" href="#" onclick="openAddItemOverlay()">Add New Item</a>
+
+        <!-- Overlay for adding new item -->
+        <div id="addItemOverlay" class="overlay">
+            <div class="overlay-content">
+                <span class="close" onclick="closeAddItemOverlay()">&times;</span>
+                <h2>Add New Item</h2>
+                <form id="addItemForm" method="post" action="/additem">
+                    <!-- Input fields for adding a new item will be populated dynamically -->
+                    <div id="addItemFields">
+                        <!-- Fields will be populated dynamically based on selected table -->
+                    </div>
+                    <button type="submit">Add Item</button>
+                </form>
+            </div>
+        </div>
+
+
     <!-- Overlay for update -->
     <div id="updateOverlay" class="overlay">
         <div class="overlay-content">
@@ -69,13 +89,38 @@
         </div>
     </div>
 
+    <!-- Overlay for confirmation -->
+    <div id="confirmationOverlay" class="overlay">
+        <div class="overlay-content">
+            <h2>Are you sure?</h2>
+            <p>This action cannot be undone.</p>
+            <button id="confirmDeleteBtn">Confirm</button>
+            <button id="cancelDeleteBtn">Cancel</button>
+        </div>
+    </div>
+
     <script>
+        function openConfirmationOverlay(deleteUrl) {
+            var confirmationOverlay = document.getElementById("confirmationOverlay");
+            confirmationOverlay.style.display = "block";
+
+            // Handle confirm button click
+            document.getElementById("confirmDeleteBtn").onclick = function() {
+                window.location.href = deleteUrl; // Proceed with delete action
+            };
+
+            // Handle cancel button click
+            document.getElementById("cancelDeleteBtn").onclick = function() {
+                confirmationOverlay.style.display = "none"; // Hide overlay
+            };
+        }
+
         function populateTable() {
             var tableSelect = document.getElementById("table");
             var selectedTable = tableSelect.value;
             var tableContainer = document.getElementById("tableContainer");
             tableContainer.innerHTML = ""; // Clear previous table
-            
+
             // Fetch data for the selected table using Flask route
             fetch(`/get_options/${selectedTable}`)
                 .then(response => response.json())
@@ -104,6 +149,17 @@
                             openOverlay(selectedTable ,item); // Pass the item object to populate overlay
                         };
                         updateCell.appendChild(updateButton);
+
+                        // Add delete button column
+                        var deleteCell = row.insertCell();
+                        var deleteButton = document.createElement("button");
+                        deleteButton.textContent = "Delete";
+                        deleteButton.className = "update-button";
+                        var deleteUrl = `/deleteitem/${selectedTable}/${item.id}`;
+                        deleteButton.onclick = function() {
+                            openConfirmationOverlay(deleteUrl);
+                        };
+                        deleteCell.appendChild(deleteButton);
                     });
 
                     tableContainer.appendChild(table);
@@ -148,6 +204,62 @@
             var overlay = document.getElementById("updateOverlay");
             overlay.style.display = "none";
         }
+
+        function openAddItemOverlay() {
+            var addItemOverlay = document.getElementById("addItemOverlay");
+            addItemOverlay.style.display = "block";
+            var addItemFields = document.getElementById("addItemFields");
+            addItemFields.innerHTML = ""; // Clear previous fields
+
+            var addItemTableSelect = document.getElementById("table");
+            var selectedTable = addItemTableSelect.value;
+
+            // Create hidden input field for table value
+            var tableInput = document.createElement("input");
+            tableInput.type = "hidden";
+            tableInput.name = "table"; // Name it appropriately for your backend processing
+            tableInput.value = selectedTable;
+            addItemFields.appendChild(tableInput);
+
+            // Fetch options for the selected table using Flask route
+            fetch(`/get_options/${selectedTable}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Check if data is an array and has at least one item
+                    if (Array.isArray(data) && data.length > 0) {
+                        var firstItem = data[0]; // Get the first item from the list
+                        // Create input fields dynamically based on the first item data
+                        Object.keys(firstItem).forEach(key => {
+                            // Skip creating input fields for 'id' key
+                            if (key !== 'id') {
+                                var label = document.createElement("label");
+                                label.textContent = key.charAt(0).toUpperCase() + key.slice(1);
+                                addItemFields.appendChild(label);
+
+                                var input = document.createElement("input");
+                                input.type = "text";
+                                input.name = key; // Set input name to match item data key
+                                input.value = ""; // Start with empty value
+                                addItemFields.appendChild(input);
+                            }
+                        });
+                    } else {
+                        console.error('No data received or empty data array.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching table data:', error);
+                });
+        }
+
+        function closeAddItemOverlay() {
+            var addItemOverlay = document.getElementById("addItemOverlay");
+            addItemOverlay.style.display = "none";
+        }
+
+        // // Add event listener to re-populate input fields on table selection change
+        // document.getElementById("addItemTable").addEventListener("change", openAddItemOverlay);
+
 
         // Call populateTable initially to populate the table based on the default selected table
         populateTable();
