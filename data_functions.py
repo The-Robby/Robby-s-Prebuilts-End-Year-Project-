@@ -180,6 +180,9 @@ def info_catcher_in_dictionary(table, id=None):
             case 'user':
                 datalist = [{'id':row[0], 'gebruikersnaam': row[1], 'pass':row[2], 'naam':row[3], 'adres':row[4], 'uitgegeven':row[5], 'isadmin':row[6], 'cart': []} for row in result]
                 return datalist
+            case 'message':
+                datalist = [{'id':row[0], 'userid':row[1], 'idlist':row[2], 'naam':row[3]} for row in result]
+                return datalist
             case _:
                 str = f''
     else:
@@ -335,7 +338,7 @@ def prebuilt_name_converter(prebuiltlist, buy=None):
 
         return newlist
     
-def check_existence(table, name=None, id=None, returntype="bool"):
+def check_existence(table, name=None, userid=None, id=None, returntype="bool"):
     """
     This function checks if something exists in the database.
 
@@ -354,10 +357,14 @@ def check_existence(table, name=None, id=None, returntype="bool"):
             cursor = conn.cursor()
             if name is not None:
                 sql = f'''SELECT * FROM {table} WHERE naam = "{name}"'''
-            if id is not None:
+            elif id is not None:
                 if table in ('mom', 'moederbord', 'motherboard'):
                     sql = f'''SELECT * FROM {table} WHERE momid = {id}'''
                 sql = f'''SELECT * FROM {table} WHERE {table}id = {id}'''
+            elif userid is not None:
+                sql = f'''SELECT * FROM {table} WHERE userid = {userid}'''
+            else:
+                sql = f'''SELECT * FROM {table}'''
             cursor.execute(sql)
             result = cursor.fetchall()
             if returntype == acceptedreturnvalues[0]:

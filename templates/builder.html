@@ -164,7 +164,7 @@
             <p id="case-info">Select a case to see its info.</p>
         </div>
 
-        <form id="hiddenForm" action="/addtocart" method="post">
+        <form id="hiddenForm" action="/addtocart" method="POST">
             <input type="hidden" id="cpu-form" name="cpu">
             <input type="hidden" id="gpu-form" name="gpu">
             <input type="hidden" id="psu-form" name="psu">
@@ -172,9 +172,12 @@
             <input type="hidden" id="mom-form" name="moederbord">
             <input type="hidden" id="case-form" name="behuizing">
             <input type="hidden" id="storage-form" name="opslag">
-            
-        </form>
         <button type="submit" id="cart">Add to Cart</button>
+        {% if noButton != True %}
+        <button type="submit" id="admin" formaction="/admin-review" >Add your Prebuilt to the main page!</button> 
+        {% endif %}           
+        </form>
+
     </div>
     {% endif %}
 
@@ -190,6 +193,7 @@
         var totalprice = 0; 
         var form = document.getElementById("hiddenForm");
         var cart = document.getElementById("cart");
+        var admin = document.getElementById("admin");
         //FUNCTION
         function tieHiddenValue(HiddenInputID, SelectID) {
             var otherElementValue = document.getElementById(SelectID).value;
@@ -494,6 +498,17 @@
         });
 
         cart.addEventListener("click", function() {
+            tieHiddenValue('cpu-form', 'cpu-select');
+            tieHiddenValue('gpu-form', 'gpu-select');
+            tieHiddenValue('psu-form', 'psu-select');
+            tieHiddenValue('ram-form', 'ram-select');
+            tieHiddenValue('mom-form', 'mom-select');
+            tieHiddenValue('case-form', 'case-select');
+            tieHiddenValue('storage-form', 'storage-select');
+            form.submit();
+        });
+
+        admin.addEventListener("click", function() {
             tieHiddenValue('cpu-form', 'cpu-select');
             tieHiddenValue('gpu-form', 'gpu-select');
             tieHiddenValue('psu-form', 'psu-select');

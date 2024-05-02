@@ -91,16 +91,19 @@ def dashboard():
     if 'account' in session:
         account = session['account']
         admin = False # initialize admin variable
-
+        noMessage = True
         # Create list of strings from the database to fill dashboard----#
         prebuiltlist = df.getDataFromTable('prebuilt')                  #
         prebuilt = df.prebuilt_name_converter(prebuiltlist)             #
         #---------------------------------------------------------------#
 
+        if df.check_existence('message'):
+            noMessage = False
+
         # render dashboard based on admin or not----------------------------------------------------#
         if account['isadmin'] == 1:                                                                 #
             admin = True                                                                            #
-        return render_template('dashboard.html', account=account, admin=admin, prebuilt=prebuilt)   #
+        return render_template('dashboard.html', account=account, admin=admin, prebuilt=prebuilt, noMessage=noMessage)   #
         # ------------------------------------------------------------------------------------------#
     return redirect(url_for('login'))
 
@@ -109,7 +112,10 @@ def dashboard():
 def builder():
     if 'account' in session:
         account = session['account']
-        return render_template('builder.html', account=account, reviewcart=None)
+        noButton = False
+        if df.check_existence('message', userid=account['id'], returntype='bool') == True:
+            noButton = True
+        return render_template('builder.html', account=account, reviewcart=None, noButton=noButton)
     return redirect(url_for('login'))
 
 @app.route('/get_options/<component>')
@@ -121,13 +127,41 @@ def get_options(component):
     'psu': df.info_catcher_in_dictionary('psu'),
     'storage': df.info_catcher_in_dictionary('opslag'),
     'mom': df.info_catcher_in_dictionary('moederbord'),
-    'case': df.info_catcher_in_dictionary('behuizing')
+    'case': df.info_catcher_in_dictionary('behuizing'),
+    'message': df.info_catcher_in_dictionary('message')
     }
     # Fetch options for the specified component which has been passed on from the html
     if component in components:
         return jsonify(components[component])
     else:
         return jsonify([])
+    
+#-----------------------------------------------------------------------------------------ADMIN-REVIEW.HTML----------------------------------------------------------------------------------
+@app.route('/admin-review', methods = ['GET','POST'])
+def admin_review():
+    if 'account' in session:
+        account = session['account']
+        accountID = account['id']
+        fail = ''
+        idlist = []
+        if request.method == 'POST':
+            idlist = [int(item[1]) for item in request.form.items() if item[1] != 'default']
+            if len(idlist) < 7:
+                fail = 'lengthError'
+            print(idlist)
+        if request.method == 'GET':
+            naam = request.args.get('naam')
+            if df.check_existence('message', str(naam)):
+                fail = 'nameExists'
+            idlist = request.args.get('idlist')
+            try:
+                df.inserDataIntoTable('message', 'UserID, IDLIST, naam', f'{accountID}, "{idlist}", "{naam}"')
+                return redirect(url_for('builder'))
+            except Exception as e:
+                fail = 'inserttodatabase'
+                print(f'Error: {e}')
+        return render_template('admin-review.html', account=account, fail=fail, idlist=idlist)
+    return redirect(url_for('login'))
     
 #-----------------------------------------------------------------------------------------------CART PART---------------------------------------------------------------------------------------
 @app.route('/addtocart', methods=['GET', 'POST'])
