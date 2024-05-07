@@ -173,8 +173,10 @@
             <input type="hidden" id="case-form" name="behuizing">
             <input type="hidden" id="storage-form" name="opslag">
         <button type="submit" id="cart">Add to Cart</button>
+        <fail id="fail-message" style="display: none;"></fail>
+        <warning id="warning-message" style="display: none;"></warning>
         {% if noButton != True %}
-        <button type="submit" id="admin" formaction="/admin-review" >Add your Prebuilt to the main page!</button> 
+        <button type="submit" id="admin_review" formaction="/admin-review" >Add your Prebuilt to the main page!</button> 
         {% endif %}           
         </form>
 
@@ -193,7 +195,7 @@
         var totalprice = 0; 
         var form = document.getElementById("hiddenForm");
         var cart = document.getElementById("cart");
-        var admin = document.getElementById("admin");
+        var admin_review = document.getElementById("admin_review");
         //FUNCTION
         function tieHiddenValue(HiddenInputID, SelectID) {
             var otherElementValue = document.getElementById(SelectID).value;
@@ -483,8 +485,111 @@
             overlay.style.display = "none";
         }
 
+        function checkCompatibility() {
+            var cpuSelect = document.getElementById('cpu-select');
+            var cpuSocket = cpuSelect.options[cpuSelect.selectedIndex].getAttribute('data-socket');
+
+            var momSelect = document.getElementById('mom-select');
+            var momSocket = momSelect.options[momSelect.selectedIndex].getAttribute('data-socket');
+
+            var ramSelect = document.getElementById('ram-select');
+            var ramDDR = ramSelect.options[ramSelect.selectedIndex].getAttribute('data-ddr');
+
+            var momDDR = momSelect.options[momSelect.selectedIndex].getAttribute('data-ddr');
+
+            var failMessage = document.getElementById('fail-message');
+            var admin_review_button = document.getElementById('admin_review');
+
+            // Check if any select element has the default option selected
+            if (momSelect.value === 'default') {
+                failMessage.style.display = "none"; // Hide the fail message if default option selected
+                return; // Exit the function
+            }
+
+            if (cpuSocket !== momSocket) {
+                failMessage.style.display = "block";
+                failMessage.textContent = "CPU socket does not match motherboard socket!";
+                admin_review_button.style.display = "none";
+            } else if (ramDDR !== momDDR) {
+                failMessage.style.display = "block";    
+                failMessage.textContent = "RAM DDR type does not match motherboard DDR type!";
+                admin_review_button.style.display = "none";
+            } else {
+                failMessage.style.display = "none";
+                checkAllSelects();
+            }
+        }
+
+        function checkDdrComp() {
+            
+            var momSelect = document.getElementById('mom-select');
+            var momDDR = momSelect.options[momSelect.selectedIndex].getAttribute('data-ddr');
+            
+            var ramSelect = document.getElementById('ram-select');
+            var ramDDR = ramSelect.options[ramSelect.selectedIndex].getAttribute('data-ddr');
+            
+            var admin_review_button = document.getElementById('admin_review');
+
+            if (ramDDR !== momDDR) {
+                admin_review_button.style.display = "none"
+            }
+        }
+
+        function checkWarningCompatibility() {
+            var momSelect = document.getElementById('mom-select');
+            var momGDDR = momSelect.options[momSelect.selectedIndex].getAttribute('data-gddr');
+            
+            var gpuSelect = document.getElementById('gpu-select');
+            var gpuGDDR = gpuSelect.options[gpuSelect.selectedIndex].getAttribute('data-gddr');
+            
+            var warningMessage = document.getElementById('warning-message');
+
+            // Check if any select element has the default option selected
+            if (momSelect.value === 'default' || gpuSelect.value === 'default') {
+                warningMessage.style.display = "none"; // Hide the warning message if default option selected
+                return; // Exit the function
+            }
+
+            if (gpuGDDR !== momGDDR) {
+                warningMessage.style.display = "block";
+                warningMessage.textContent = "GPU GDDR type does not match motherboard GDDR type! In most cases this does not matter but keep an eye out!";
+            } else {
+                warningMessage.style.display = "none";
+            }
+        }
+
+        function checkAllSelects() {
+            var psuSelect = document.getElementById('psu-select');
+            var caseSelect = document.getElementById('case-select');
+            var storageSelect = document.getElementById('storage-select');
+            var momSelect = document.getElementById('mom-select');
+            var gpuSelect = document.getElementById('gpu-select')
+            var admin_review_button = document.getElementById('admin_review');
+
+            // Check if any select element has the default option selected
+            if (psuSelect.value === 'default' ||  caseSelect.value === 'default' || storageSelect.value === 'default'
+                || momSelect.value === 'default' || gpuSelect.value === 'default') {
+                admin_review_button.style.display = "none"; // Hide the admin review button if any select element has the default option
+            } else {
+                admin_review_button.style.display = "block"; // Show the admin review button if all select elements have non-default options
+            }
+        }
 
         //EVENT LISTENERS
+        document.getElementById('psu-select').addEventListener('change', checkAllSelects);
+        document.getElementById('case-select').addEventListener('change', checkAllSelects);
+        document.getElementById('storage-select').addEventListener('change', checkAllSelects);
+        document.getElementById('mom-select').addEventListener('change', checkAllSelects);
+        document.getElementById('gpu-select').addEventListener('change', checkAllSelects);
+
+        document.getElementById('mom-select').addEventListener('change', checkWarningCompatibility);
+        document.getElementById('gpu-select').addEventListener('change', checkWarningCompatibility);
+        
+        document.getElementById('cpu-select').addEventListener('change', checkCompatibility);
+        document.getElementById('ram-select').addEventListener('change', checkCompatibility);
+        document.getElementById('mom-select').addEventListener('change', checkCompatibility);
+
+
         window.addEventListener('load', function() {
             addSelectChangeListeners();
         });
@@ -508,16 +613,19 @@
             form.submit();
         });
 
-        admin.addEventListener("click", function() {
-            tieHiddenValue('cpu-form', 'cpu-select');
-            tieHiddenValue('gpu-form', 'gpu-select');
-            tieHiddenValue('psu-form', 'psu-select');
-            tieHiddenValue('ram-form', 'ram-select');
-            tieHiddenValue('mom-form', 'mom-select');
-            tieHiddenValue('case-form', 'case-select');
-            tieHiddenValue('storage-form', 'storage-select');
-            form.submit();
-        });
+        if (admin_review) {
+            admin_review.addEventListener("click", function() {
+                tieHiddenValue('cpu-form', 'cpu-select');
+                tieHiddenValue('gpu-form', 'gpu-select');
+                tieHiddenValue('psu-form', 'psu-select');
+                tieHiddenValue('ram-form', 'ram-select');
+                tieHiddenValue('mom-form', 'mom-select');
+                tieHiddenValue('case-form', 'case-select');
+                tieHiddenValue('storage-form', 'storage-select');
+                form.submit();
+            });
+        }
+
 
         //PAGELOAD
         fetchOptions('cpu', 'cpu-select');
@@ -527,7 +635,7 @@
         fetchOptions('storage', 'storage-select');
         fetchOptions('mom', 'mom-select');
         fetchOptions('case', 'case-select');
-        
+        checkAllSelects();
 
 
 

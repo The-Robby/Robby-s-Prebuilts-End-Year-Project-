@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 import storing_password as sp
 import data_functions as df
-
+import ast
 
 # -----------------------------------------------------------------------------------------GLOBALS--------------------------------------------------------------------------------
 app = Flask(__name__, static_folder="static") #creates a Flask application instance named app
@@ -92,10 +92,10 @@ def dashboard():
         account = session['account']
         admin = False # initialize admin variable
         noMessage = True
-        # Create list of strings from the database to fill dashboard----#
-        prebuiltlist = df.getDataFromTable('prebuilt')                  #
-        prebuilt = df.prebuilt_name_converter(prebuiltlist)             #
-        #---------------------------------------------------------------#
+        # Create list of strings from the database to fill dashboard--------------------#
+        prebuiltlist = [prebuilt for prebuilt in df.getDataFromTable('prebuilt')]       #
+        prebuilt = df.prebuilt_name_converter(prebuiltlist)                             #
+        #-------------------------------------------------------------------------------#
 
         if df.check_existence('message'):
             noMessage = False
@@ -144,11 +144,11 @@ def admin_review():
         accountID = account['id']
         fail = ''
         idlist = []
+        noAdminReview = True
         if request.method == 'POST':
-            idlist = [int(item[1]) for item in request.form.items() if item[1] != 'default']
+            idlist = [(item[0], int(item[1])) for item in request.form.items() if item[1] != 'default']
             if len(idlist) < 7:
                 fail = 'lengthError'
-            print(idlist)
         if request.method == 'GET':
             naam = request.args.get('naam')
             if df.check_existence('message', str(naam)):
@@ -160,9 +160,50 @@ def admin_review():
             except Exception as e:
                 fail = 'inserttodatabase'
                 print(f'Error: {e}')
-        return render_template('admin-review.html', account=account, fail=fail, idlist=idlist)
+        return render_template('admin-review.html', account=account, fail=fail, idlist=idlist, noAdminReview=noAdminReview)
     return redirect(url_for('login'))
+
+@app.route('/review', methods = ['GET','POST'])
+def review():
+    if 'account' in session:
+        account = session['account']
+        fail = ''
+        noAdminReview = True
+        if account['isadmin'] == 1:
+            noAdminReview = False
+            return render_template('admin-review.html', account=account, fail=fail, noAdminReview=noAdminReview)
+        return redirect(url_for('login'))
+    return redirect(url_for('login'))
+
+@app.route('/accept_route/<messageid>', methods = ['GET','POST'])
+def accept_route(messageid):
+    if 'account' in session:
+        account = session['account']
+        if account['isadmin'] == 1:
+            idlist = [id[1] for id in ast.literal_eval(df.info_catcher_in_dictionary('message', int(messageid))['idlist'])]
+            title = df.info_catcher_in_dictionary('message', int(messageid))['naam']
+            values = ''
+            for kakid in idlist:
+                values += f'{str(kakid)}, '
+            values += f'"{title}"'
+            values = values.rstrip(', ')
+            # ['cpu', 'gpu', 'psu', 'ram', 'moederbord', 'behuizing', 'opslag']
+            df.inserDataIntoTable('prebuilt', 'cpuid, gpuid, psuid, ramid, momid, behuizingid, opslagid, naam', values)
+            df.deleteDataFromTable('message', int(messageid))
+            return redirect(url_for('review'))
+    return redirect(url_for('login'))
+
+@app.route('/delete_route/<messageid>', methods = ['GET','POST'])
+def delete_route(messageid):
+    if 'account' in session:
+        account = session['account']
+        if account['isadmin'] == 1:
+            df.deleteDataFromTable('message', int(messageid))
+            return redirect(url_for('review'))
+    return redirect(url_for('login'))
+
     
+
 #-----------------------------------------------------------------------------------------------CART PART---------------------------------------------------------------------------------------
 @app.route('/addtocart', methods=['GET', 'POST'])
 def addtocart():
@@ -202,7 +243,10 @@ def addtocartfromdash(prebuilt):
         account = session['account']
 
         # get itemIDlist from the prebuilt and turn it into a full itemlist
+        for item in df.prebuilt_name_converter(df.string_to_int_list(prebuilt), buy='buy'):
+            print(item)
         itemlist = [df.info_catcher_in_dictionary(item[0],int(item[1])) for item in df.prebuilt_name_converter(df.string_to_int_list(prebuilt), buy='buy')]
+        
 
         # now we simplify it for visual purposes
         cartlist = df.make_cart(itemlist)
@@ -434,7 +478,7 @@ def additem():
             admin = True
             if request.method == 'POST':
                 items = {key : value for key, value in request.form.items() if key != 'table'} #put all items with names and values inside dictionary
-
+                print(items, "items firsdt parameter")
                 # rename tables to correct names like in the database ------#
                 if table  in ('mom', 'storage', 'case'):                    # 
                     if table == 'mom':                                      #
@@ -454,6 +498,14 @@ def additem():
                 for key, value in items.items():                            #
                     if key in (stringitems):                                #
                         values += '"' + value + '",'                        ####
+                    elif key == "prijs":
+                        if ',' in value:
+                            value = value.replace(',','.')
+                            values += value
+                            values += ',' 
+                        else:
+                            values += value
+                            values += ',' 
                     elif key in (idstringitems):
                         if df.check_existence(key, name=value):
                             primary_key = str(df.check_existence(key, name=value, returntype="id"))

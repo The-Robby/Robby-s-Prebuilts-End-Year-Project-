@@ -36,7 +36,7 @@ CREATE TABLE `behuizing` (
   PRIMARY KEY (`BehuizingID`),
   KEY `LeverancierID_idx` (`LeverancierID`),
   CONSTRAINT `LeverancierID` FOREIGN KEY (`LeverancierID`) REFERENCES `leverancier` (`LeverancierID`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -45,7 +45,7 @@ CREATE TABLE `behuizing` (
 
 LOCK TABLES `behuizing` WRITE;
 /*!40000 ALTER TABLE `behuizing` DISABLE KEYS */;
-INSERT INTO `behuizing` VALUES (1,'Obsidian 1000D',4,'100x100x40',34,149.99,1,'https://tweakers.net/i/T_ExRH7dyARulcwakGjwRJsqHPs=/fit-in/656x/filters:strip_exif()/i/2001967595.png?f=imagenormal');
+INSERT INTO `behuizing` VALUES (1,'Obsidian 1000D',4,'100x100x40',34,149.99,1,'https://tweakers.net/i/T_ExRH7dyARulcwakGjwRJsqHPs=/fit-in/656x/filters:strip_exif()/i/2001967595.png?f=imagenormal'),(2,'6500X midi tower',9,'32,6 x 49,6 x 48,1cm',27,249.99,1,'https://img.overclockers.co.uk/images/CAS-CRS-01583/bf4e671adf4e40494c4b80259e05534f.jpg'),(3,'VS9 Black midi tower',3,'20,5 cm x 48,5 cm x 42,3 cm',98,55,9,'https://www.alternate.be/p/600x600/5/2/Sharkoon_VS9_Black_midi_tower_behuizing@@1912525.jpg');
 /*!40000 ALTER TABLE `behuizing` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -69,7 +69,7 @@ CREATE TABLE `cpu` (
   PRIMARY KEY (`CPUID`),
   KEY `LevInCpu_idx` (`LeverancierID`),
   CONSTRAINT `LevInCpu` FOREIGN KEY (`LeverancierID`) REFERENCES `leverancier` (`LeverancierID`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -78,7 +78,7 @@ CREATE TABLE `cpu` (
 
 LOCK TABLES `cpu` WRITE;
 /*!40000 ALTER TABLE `cpu` DISABLE KEYS */;
-INSERT INTO `cpu` VALUES (1,'i9-13900K','5,2GHz',24,'1700',19,675.95,2,'https://barakacomputer.net/wp-content/uploads/2023/12/13900k.webp'),(2,'i9-14900K','6,0GHz',24,'1700',9,639,2,'https://esp-tech.com/cdn/shop/files/23-057-UNIV-K-N13840_1200x1200.png?v=1698086888'),(3,'i7-14700K','5,6 GHz',20,'1700',6,459,2,'https://tweakers.net/i/IUBEdypgH1XHLOrXCeAZBuYGils=/fit-in/656x/filters:strip_exif()/i/2006164056.png?f=imagenormal');
+INSERT INTO `cpu` VALUES (1,'i9-13900K','5,2GHz',24,'1700',19,675.95,2,'https://barakacomputer.net/wp-content/uploads/2023/12/13900k.webp'),(2,'i9-14900K','6,0GHz',24,'1700',8,639,2,'https://esp-tech.com/cdn/shop/files/23-057-UNIV-K-N13840_1200x1200.png?v=1698086888'),(3,'i7-14700K','5,6 GHz',20,'1700',6,459,2,'https://tweakers.net/i/IUBEdypgH1XHLOrXCeAZBuYGils=/fit-in/656x/filters:strip_exif()/i/2006164056.png?f=imagenormal'),(4,'i3-12100F','4,3GHz',4,'1700',189,169.45,2,'https://cdn.itgadgetsonline.com/wp-content/uploads/2022/06/i3-12100f-3.webp');
 /*!40000 ALTER TABLE `cpu` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -111,7 +111,7 @@ CREATE TABLE `gpu` (
 
 LOCK TABLES `gpu` WRITE;
 /*!40000 ALTER TABLE `gpu` DISABLE KEYS */;
-INSERT INTO `gpu` VALUES (1,'Nvidia GeForce RTX 4080','2535 MHz','16GB','6X',17,1479,6,'https://www.nvidia.com/content/dam/en-zz/Solutions/geforce/news/geforce-rtx-40-series-ultra-efficient-beyond-fast/nvidia-geforce-rtx-4080-ogimage.png'),(2,'Arc A770 CL 16GO','2150 MHz','16GB','6',61,420.99,2,'https://www.asrock.com/Graphics-Card/photo/Intel%20Arc%20A770%20Challenger%2016GB%20OC(M1).png'),(3,'GeForce RTX 4090','2520 MHz','24GB','6X',10,1999,6,'https://images.nvidia.com/aem-dam/Solutions/geforce/ada/news/rtx-40-series-graphics-cards-announcements/geforce-rtx-4090-product-photo-002-850px.png');
+INSERT INTO `gpu` VALUES (1,'GeForce RTX 4080','2535 MHz','16GB','6X',17,1479,6,'https://www.nvidia.com/content/dam/en-zz/Solutions/geforce/news/geforce-rtx-40-series-ultra-efficient-beyond-fast/nvidia-geforce-rtx-4080-ogimage.png'),(2,'Arc A770 CL 16GO','2150 MHz','16GB','6',61,420.99,2,'https://www.asrock.com/Graphics-Card/photo/Intel%20Arc%20A770%20Challenger%2016GB%20OC(M1).png'),(3,'GeForce RTX 4090','2520 MHz','24GB','6X',10,1999,6,'https://images.nvidia.com/aem-dam/Solutions/geforce/ada/news/rtx-40-series-graphics-cards-announcements/geforce-rtx-4090-product-photo-002-850px.png');
 /*!40000 ALTER TABLE `gpu` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -126,7 +126,7 @@ CREATE TABLE `leverancier` (
   `LeverancierID` int NOT NULL AUTO_INCREMENT,
   `Naam` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`LeverancierID`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -135,7 +135,7 @@ CREATE TABLE `leverancier` (
 
 LOCK TABLES `leverancier` WRITE;
 /*!40000 ALTER TABLE `leverancier` DISABLE KEYS */;
-INSERT INTO `leverancier` VALUES (1,'Corsair'),(2,'Intel'),(3,'GIGABYTE'),(4,'ASUS'),(5,'SAMSUNG'),(6,'NVIDIA'),(7,'Lexar');
+INSERT INTO `leverancier` VALUES (1,'Corsair'),(2,'Intel'),(3,'GIGABYTE'),(4,'ASUS'),(5,'SAMSUNG'),(6,'NVIDIA'),(7,'Lexar'),(8,'MSI'),(9,'Sharkoon');
 /*!40000 ALTER TABLE `leverancier` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -149,13 +149,13 @@ DROP TABLE IF EXISTS `message`;
 CREATE TABLE `message` (
   `MessageID` int NOT NULL AUTO_INCREMENT,
   `UserID` int NOT NULL,
-  `IDList` varchar(45) NOT NULL,
+  `IDList` tinytext NOT NULL,
   `Naam` varchar(45) NOT NULL,
   PRIMARY KEY (`MessageID`),
   UNIQUE KEY `MessageID_UNIQUE` (`MessageID`),
   KEY `UserID_idx` (`UserID`),
   CONSTRAINT `FKUID` FOREIGN KEY (`UserID`) REFERENCES `user` (`UserID`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -187,7 +187,7 @@ CREATE TABLE `moederbord` (
   PRIMARY KEY (`MomID`),
   KEY `LevInMom_idx` (`LeverancierID`),
   CONSTRAINT `LevInMom` FOREIGN KEY (`LeverancierID`) REFERENCES `leverancier` (`LeverancierID`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -196,7 +196,7 @@ CREATE TABLE `moederbord` (
 
 LOCK TABLES `moederbord` WRITE;
 /*!40000 ALTER TABLE `moederbord` DISABLE KEYS */;
-INSERT INTO `moederbord` VALUES (1,'ROG STRIX B760-F GAMING','1700',5,'6X',0,269,4,'https://dlcdnwebimgs.asus.com/gain/69159885-AADB-444B-B17B-C1809F91A343/w250');
+INSERT INTO `moederbord` VALUES (1,'ROG STRIX B760-F GAMING','1700',5,'6X',0,269,4,'https://dlcdnwebimgs.asus.com/gain/69159885-AADB-444B-B17B-C1809F91A343/w250'),(2,'PRO B760M-P DDR4','1700',4,'6',189,155.45,8,'https://tweakers.net/i/iEanPQ-skjEbTvOd7v45Mp_1JIs=/i/2005565502.png');
 /*!40000 ALTER TABLE `moederbord` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -266,7 +266,7 @@ CREATE TABLE `prebuilt` (
   CONSTRAINT `opslagid` FOREIGN KEY (`OpslagID`) REFERENCES `opslag` (`OpslagID`),
   CONSTRAINT `psuid` FOREIGN KEY (`PSUID`) REFERENCES `psu` (`PSUID`),
   CONSTRAINT `ramid` FOREIGN KEY (`RAMID`) REFERENCES `ram` (`RAMID`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -275,7 +275,7 @@ CREATE TABLE `prebuilt` (
 
 LOCK TABLES `prebuilt` WRITE;
 /*!40000 ALTER TABLE `prebuilt` DISABLE KEYS */;
-INSERT INTO `prebuilt` VALUES (1,1,1,1,1,2,1,1,'Robby\'s Prebuilt');
+INSERT INTO `prebuilt` VALUES (1,1,1,1,1,2,1,1,'Robby\'s Prebuilt'),(3,1,2,2,3,3,1,1,'The Beast!'),(4,3,1,4,2,1,2,2,'Budget Bitch'),(5,2,2,2,3,3,1,1,'The Beast but white :)');
 /*!40000 ALTER TABLE `prebuilt` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -300,7 +300,7 @@ CREATE TABLE `psu` (
   KEY `TypInPsu_idx` (`TypeID`),
   CONSTRAINT `LevInPsu` FOREIGN KEY (`LeverancierID`) REFERENCES `leverancier` (`LeverancierID`),
   CONSTRAINT `TypInPsu` FOREIGN KEY (`TypeID`) REFERENCES `type` (`TypeID`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -309,7 +309,7 @@ CREATE TABLE `psu` (
 
 LOCK TABLES `psu` WRITE;
 /*!40000 ALTER TABLE `psu` DISABLE KEYS */;
-INSERT INTO `psu` VALUES (1,'RM1000e V2 PSU',1000,2,14,144.9,1,'https://assets.corsair.com/image/upload/f_auto/q_auto/v1680204879/products/Power-Supply-Units/base-rme-series-2023-psu-config/Content/RM1000e_ATX3_image.png');
+INSERT INTO `psu` VALUES (1,'RM1000e V2 PSU',1000,2,14,144.9,1,'https://assets.corsair.com/image/upload/f_auto/q_auto/v1680204879/products/Power-Supply-Units/base-rme-series-2023-psu-config/Content/RM1000e_ATX3_image.png'),(2,'CX650',650,3,143,78.95,1,'https://hwimg.nl/largesysimg/corsair_cx_650_4.png');
 /*!40000 ALTER TABLE `psu` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -357,7 +357,7 @@ CREATE TABLE `type` (
   `TypeID` int NOT NULL AUTO_INCREMENT,
   `Naam` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`TypeID`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -366,7 +366,7 @@ CREATE TABLE `type` (
 
 LOCK TABLES `type` WRITE;
 /*!40000 ALTER TABLE `type` DISABLE KEYS */;
-INSERT INTO `type` VALUES (1,'M.2'),(2,'Modulair');
+INSERT INTO `type` VALUES (1,'M.2'),(2,'Modulair'),(3,'Non-Modulair');
 /*!40000 ALTER TABLE `type` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -396,7 +396,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (18,'admin','a15a80a3d51b2d4fef427803191341bee161377dc63242b305414bdeb079b72b','Admin','AdminStreet',95275.7,1,'9²tÂ»üÅ:N\'\Z÷ÈzxÜmèc°Þ'),(19,'robbyvgaming','7a0c62479b7264d99d400181518afca60cb2d1a874a63caaf8e07c15f58b5750','Robbert Groffi','Halingenstraat 32, Velm 3806',918,0,']TzK×Y2^è¼mÄ	¦õg»Ô²ÖÔY¶'),(20,'victoria','45027579fbb86c7982ca78d43667ef3c7f0c7818410ff8abb10af20a4ea1f745','Victoria Crauwels','Neger is de poepstraat 32',NULL,0,'¸hÞñÙÄµÈ9%kø¥Ëçz&/¶Ã\0äg%N');
+INSERT INTO `user` VALUES (18,'admin','a15a80a3d51b2d4fef427803191341bee161377dc63242b305414bdeb079b72b','Admin','AdminStreet',95914.7,1,'9²tÂ»üÅ:N\'\Z÷ÈzxÜmèc°Þ'),(19,'robbyvgaming','7a0c62479b7264d99d400181518afca60cb2d1a874a63caaf8e07c15f58b5750','Robbert Groffi','Halingenstraat 32, Velm 3806',918,0,']TzK×Y2^è¼mÄ	¦õg»Ô²ÖÔY¶'),(20,'victoria','45027579fbb86c7982ca78d43667ef3c7f0c7818410ff8abb10af20a4ea1f745','Victoria Crauwels','Neger is de poepstraat 32',NULL,0,'¸hÞñÙÄµÈ9%kø¥Ëçz&/¶Ã\0äg%N');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -409,4 +409,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-02 21:58:51
+-- Dump completed on 2024-05-07 21:56:21

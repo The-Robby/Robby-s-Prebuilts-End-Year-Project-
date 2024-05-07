@@ -188,7 +188,7 @@ def info_catcher_in_dictionary(table, id=None):
     else:
         match table:    
             case 'behuizing':
-                datalist = [{'table':table, 'id':row[0], 'naam': row[1], 'aantalfans':row[2], 'afmetingen':row[3], 'stock':row[4], 'prijs':row[5], 'leverancier':get_foreign_key_name('leverancier', row[6]), 'fotolink': row[7]} for row in result if row[0] == id]
+                datalist = [{'table':table, 'id':row[0], 'naam': row[1], 'aantalfans':row[2], 'afmetingen':row[3], 'stock':row[4], 'prijs':row[5], 'leverancier':get_foreign_key_name('leverancier', row[6]), 'fotolink': row[7]} for row in result if int(row[0]) == id]
                 return datalist[0]
             case 'cpu':
                 datalist = [{'table':table, 'id':row[0], 'naam': row[1], 'clock':row[2], 'cores':row[3], 'socket':row[4], 'stock':row[5],'prijs':row[6], 'leverancier':get_foreign_key_name('leverancier', row[7])} for row in result if row[0] == id]
@@ -210,6 +210,9 @@ def info_catcher_in_dictionary(table, id=None):
                 return datalist[0]
             case 'user':
                 datalist = [{'table':table, 'id':row[0], 'gebruikersnaam': row[1], 'pass':row[2], 'naam':row[3], 'adres':row[4], 'uitgegeven':row[5], 'isadmin':row[6], 'cart': []} for row in result if row[0] == id]
+                return datalist[0]
+            case 'message':
+                datalist = [{'id':row[0], 'userid':row[1], 'idlist':row[2], 'naam':row[3]} for row in result if row[0] == id]
                 return datalist[0]
             case _:
                 str = f''
@@ -251,86 +254,105 @@ def prebuilt_name_converter(prebuiltlist, buy=None):
     """this function takes every column returned from the database (which are all FK ID's)
         and converts them into tuples of their name and ID.
 
-        Parameters: Prebuiltlist (which is the list containing every column in the database from the table (prebuilt) of one PK)(list[pk,fk,fk,fk,fk,fk,fotolink...])
+        Parameters: Prebuiltlist (which is the list containing every column in the database from the table (prebuilt) of one PK)(list[pk,fk,fk,fk,fk,fk,naam...])
                     buy (default is none and will return the list of tuples, in front is total price, in the back is IDlist) (str = "buy")
         
         Returns: tuple list of name and pk but if buy= buy it returns a list of tuples but only the parts
     """
     if buy == None or buy != 'buy':
         newlist = []
+        # print(prebuiltlist, "first parameter")
         for tup in prebuiltlist:
+            # print(tup, "tup from first loop")
             tuplelist = []
             for i in range(len(tup)):
                 if len(tup) <= 9:
                     match i:
                         case 0:
                             tuplelist.append(get_prebuilt_price(tup[i]))
+                            # print(tuplelist, "case 0")
                         case 1:   
                             name = get_foreign_key_name('behuizing', tup[i])
                             tuplelist.append(name)
-                            image_url = info_catcher_in_dictionary('behuizing', tup[0])
+                            image_url = info_catcher_in_dictionary('behuizing', tup[i])
                             tuplelist.append(image_url['fotolink'])
+                            # print(tuplelist, "case 1")
                         case 2:   
                             name = get_foreign_key_name('opslag', tup[i])
                             tuplelist.append(name)
+                            # print(tuplelist, "case 2")
                         case 3:   
                             name = get_foreign_key_name('cpu', tup[i])
                             tuplelist.append(name)
+                            # print(tuplelist, "case 3")
                         case 4:   
                             name = get_foreign_key_name('gpu', tup[i])
                             tuplelist.append(name)
+                            # print(tuplelist, "case 4")
                         case 5:   
                             info = info_catcher_in_dictionary('ram', tup[i])
                             string = info['leverancier'] + ' ' + info['naam'] + ' ' + info['clock']
                             tuplelist.append(f'{string}')
+                            # print(tuplelist, "case 5")
                         case 6:   
                             name = get_foreign_key_name('psu', tup[i])
                             tuplelist.append(name)
+                            # print(tuplelist, "case 6")
                         case 7:   
                             name = get_foreign_key_name('moederbord', tup[i])
                             tuplelist.append(name)
+                            # print(tuplelist, "case 7")
                         case 8:
-                            tuplelist.append(tup[i]) 
+                            tuplelist.append(tup[i])
+                            # print(tuplelist, "case 8") 
                         case _:
                             raise ValueError("Item index cannot be empty")
                 else:
                     raise ValueError("Tuple is wrong length, check if the correct tuple was given")
             idlist = list(tup)
-
-            # POP IDLIST
-            idlist.pop(8)
+            # print(idlist, "this is the idlist from list(tup) before popping")
+            # POP IDLIST -- SEEMS TO BE THE NAME INSTEAD OF URL
+            # idlist.pop(8)
             # POP URL
-            idlist.pop(2)
-
+            #idlist.pop(2)
+            # POP PREBUILT ID
+            #idlist.pop(0)
+            # print(idlist, "after popping 8 then 2")
             tuplelist.append(idlist)
+            # print(tuplelist, "after adding id list")
             newlist.append(tuple(tuplelist))
+            #print(newlist, "new list at end of loop")
         return newlist
     elif buy == 'buy':
         newlist = []
         if isinstance(prebuiltlist, list):
             for item in range(len(prebuiltlist)):
                 match item:
-                    case 0:   
+                    case 0:
+                        pass
+                    case 1:   
                         name = ('behuizing', prebuiltlist[item])
                         newlist.append(name)
-                    case 1:   
+                    case 2:   
                         name = ('opslag', prebuiltlist[item])
                         newlist.append(name)
-                    case 2:   
+                    case 3:   
                         name = ('cpu', prebuiltlist[item])
                         newlist.append(name)
-                    case 3:   
+                    case 4:   
                         name = ('gpu', prebuiltlist[item])
                         newlist.append(name)
-                    case 4:   
+                    case 5:   
                         name = ('ram', prebuiltlist[item])
                         newlist.append(name)
-                    case 5:   
+                    case 6:   
                         name = ('psu', prebuiltlist[item])
                         newlist.append(name)
-                    case 6:   
+                    case 7:   
                         name = ('moederbord', prebuiltlist[item])
                         newlist.append(name)
+                    case 8:
+                        pass
                     case _:
                         raise ValueError(f"Item index cannot be empty, errors in this list: {prebuiltlist}")
         else:

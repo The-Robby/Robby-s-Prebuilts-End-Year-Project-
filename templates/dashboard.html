@@ -45,7 +45,7 @@
     {% for item in prebuilt %}      <!-- Making as much prebuilts "div"'s as there are in the database -->
     <div class="options-item">
         <h2 id="title">{{item[9]}}</h2>
-        <img src="{{item[2]}}" alt="prebuilt pic" style="max-height: 240px; width: auto;">
+        <img src="{{item[2]}}" alt="prebuilt pic" style="max-height: 340px;">
         <li>{{item[4]}}</li>
         <li>{{item[5]}}</li>
         <li>{{item[8]}}</li>
@@ -53,6 +53,7 @@
         <li>{{item[3]}}</li>
         <li>{{item[7]}}</li>
         <li>{{item[1]}}</li>
+        <!-- <li>{{prebuilt}}</li> -->
         <a href="addtocartfromdash/{{item[10]}}">Add to cart ${{item[0]}}</a>
     </div>
     {% endfor %}
