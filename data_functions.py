@@ -183,6 +183,12 @@ def info_catcher_in_dictionary(table, id=None):
             case 'message':
                 datalist = [{'id':row[0], 'userid':row[1], 'idlist':row[2], 'naam':row[3]} for row in result]
                 return datalist
+            case 'requests':
+                datalist = [{'id':row[0], 'userid':row[1], 'request':row[2]} for row in result]
+                return datalist
+            case 'prebuilt':
+                datalist = [{'id':row[0], 'behuizing':get_foreign_key_name('behuizing', row[1]), 'opslag':get_foreign_key_name('opslag', row[2]), 'cpu':get_foreign_key_name('cpu', row[3]), 'gpu':get_foreign_key_name('gpu', row[4]), 'ram':get_foreign_key_name('ram', row[5]), 'psu':get_foreign_key_name('psu', row[6]), 'moederbord':get_foreign_key_name('moederbord', row[7]), 'naam':row[8]} for row in result]
+                return datalist
             case _:
                 str = f''
     else:

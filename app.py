@@ -92,6 +92,7 @@ def dashboard():
         account = session['account']
         admin = False # initialize admin variable
         noMessage = True
+        noRequest = True
         # Create list of strings from the database to fill dashboard--------------------#
         prebuiltlist = [prebuilt for prebuilt in df.getDataFromTable('prebuilt')]       #
         prebuilt = df.prebuilt_name_converter(prebuiltlist)                             #
@@ -99,11 +100,13 @@ def dashboard():
 
         if df.check_existence('message'):
             noMessage = False
+        if df.check_existence('requests'):
+            noRequest = False
 
         # render dashboard based on admin or not----------------------------------------------------#
         if account['isadmin'] == 1:                                                                 #
             admin = True                                                                            #
-        return render_template('dashboard.html', account=account, admin=admin, prebuilt=prebuilt, noMessage=noMessage)   #
+        return render_template('dashboard.html', account=account, admin=admin, prebuilt=prebuilt, noMessage=noMessage, noRequest=noRequest)   #
         # ------------------------------------------------------------------------------------------#
     return redirect(url_for('login'))
 
@@ -128,7 +131,9 @@ def get_options(component):
     'storage': df.info_catcher_in_dictionary('opslag'),
     'mom': df.info_catcher_in_dictionary('moederbord'),
     'case': df.info_catcher_in_dictionary('behuizing'),
-    'message': df.info_catcher_in_dictionary('message')
+    'message': df.info_catcher_in_dictionary('message'),
+    'prebuilt': df.info_catcher_in_dictionary('prebuilt'),
+    'requests': df.info_catcher_in_dictionary('requests')
     }
     # Fetch options for the specified component which has been passed on from the html
     if component in components:
@@ -173,6 +178,38 @@ def review():
             noAdminReview = False
             return render_template('admin-review.html', account=account, fail=fail, noAdminReview=noAdminReview)
         return redirect(url_for('login'))
+    return redirect(url_for('login'))
+
+@app.route('/review-request', methods = ['GET','POST'])
+def review_request():
+    if 'account' in session:
+        account = session['account']
+        if account['isadmin'] == 1:
+            return render_template('requests.html', account=account)
+        return redirect(url_for('login'))
+    return redirect(url_for('login'))
+
+@app.route('/request-ticket', methods = ['GET','POST'])
+def request_ticket():
+    if 'account' in session:
+        account = session['account']
+        if request.method == 'GET':
+            message = str(request.args.get('ticket'))
+            print(message)
+            userid = account['id']
+            if message != 'None':
+                df.inserDataIntoTable('requests', 'userid, request', f'{userid}, "{message}"')
+                return redirect(url_for('dashboard'))
+        return render_template('requests.html', account=account, createTicket=True)
+    return redirect(url_for('login'))
+
+@app.route('/delete_request/<messageid>', methods = ['GET','POST'])
+def delete_request(messageid):
+    if 'account' in session:
+        account = session['account']
+        if account['isadmin'] == 1:
+            df.deleteDataFromTable('requests', int(messageid))
+            return redirect(url_for('review_request'))
     return redirect(url_for('login'))
 
 @app.route('/accept_route/<messageid>', methods = ['GET','POST'])

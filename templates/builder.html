@@ -576,18 +576,33 @@
         }
 
         //EVENT LISTENERS
-        document.getElementById('psu-select').addEventListener('change', checkAllSelects);
-        document.getElementById('case-select').addEventListener('change', checkAllSelects);
-        document.getElementById('storage-select').addEventListener('change', checkAllSelects);
-        document.getElementById('mom-select').addEventListener('change', checkAllSelects);
-        document.getElementById('gpu-select').addEventListener('change', checkAllSelects);
+        // document.getElementById('psu-select').addEventListener('change', checkAllSelects);
+        // document.getElementById('case-select').addEventListener('change', checkAllSelects);
+        // document.getElementById('storage-select').addEventListener('change', checkAllSelects);
+        // document.getElementById('mom-select').addEventListener('change', checkAllSelects);
 
-        document.getElementById('mom-select').addEventListener('change', checkWarningCompatibility);
-        document.getElementById('gpu-select').addEventListener('change', checkWarningCompatibility);
+        // document.getElementById('mom-select').addEventListener('change', checkWarningCompatibility);
+        // document.getElementById('gpu-select').addEventListener('change', checkWarningCompatibility);
         
-        document.getElementById('cpu-select').addEventListener('change', checkCompatibility);
-        document.getElementById('ram-select').addEventListener('change', checkCompatibility);
-        document.getElementById('mom-select').addEventListener('change', checkCompatibility);
+        // document.getElementById('cpu-select').addEventListener('change', checkCompatibility);
+        // document.getElementById('ram-select').addEventListener('change', checkCompatibility);
+        // document.getElementById('mom-select').addEventListener('change', checkCompatibility);
+
+        document.getElementById('psu-select').addEventListener('change', handleSelectChange);
+        document.getElementById('case-select').addEventListener('change', handleSelectChange);
+        document.getElementById('storage-select').addEventListener('change', handleSelectChange);
+        document.getElementById('mom-select').addEventListener('change', handleSelectChange);
+        document.getElementById('gpu-select').addEventListener('change', handleSelectChange);
+        document.getElementById('cpu-select').addEventListener('change', handleSelectChange);
+        document.getElementById('ram-select').addEventListener('change', handleSelectChange);
+
+        // Define the function to handle the select change event
+        function handleSelectChange() {
+            checkAllSelects();
+            checkWarningCompatibility();
+            checkCompatibility();
+        }
+
 
 
         window.addEventListener('load', function() {

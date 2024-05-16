@@ -45,7 +45,7 @@ CREATE TABLE `behuizing` (
 
 LOCK TABLES `behuizing` WRITE;
 /*!40000 ALTER TABLE `behuizing` DISABLE KEYS */;
-INSERT INTO `behuizing` VALUES (1,'Obsidian 1000D',4,'100x100x40',34,149.99,1,'https://tweakers.net/i/T_ExRH7dyARulcwakGjwRJsqHPs=/fit-in/656x/filters:strip_exif()/i/2001967595.png?f=imagenormal'),(2,'6500X midi tower',9,'32,6 x 49,6 x 48,1cm',27,249.99,1,'https://img.overclockers.co.uk/images/CAS-CRS-01583/bf4e671adf4e40494c4b80259e05534f.jpg'),(3,'VS9 Black midi tower',3,'20,5 cm x 48,5 cm x 42,3 cm',98,55,9,'https://www.alternate.be/p/600x600/5/2/Sharkoon_VS9_Black_midi_tower_behuizing@@1912525.jpg');
+INSERT INTO `behuizing` VALUES (1,'Obsidian 1000D',4,'100x100x40',34,149.99,1,'https://tweakers.net/i/T_ExRH7dyARulcwakGjwRJsqHPs=/fit-in/656x/filters:strip_exif()/i/2001967595.png?f=imagenormal'),(2,'6500X midi tower',9,'32,6 x 49,6 x 48,1cm',27,249.99,1,'https://img.overclockers.co.uk/images/CAS-CRS-01583/bf4e671adf4e40494c4b80259e05534f.jpg'),(3,'VS9 White midi tower',3,'20,5 cm x 48,5 cm x 42,3 cm',98,55,9,'https://lv4tech.com/wp-content/uploads/2024/01/VS9-1.png');
 /*!40000 ALTER TABLE `behuizing` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -347,6 +347,32 @@ INSERT INTO `ram` VALUES (1,'Vengeance LPX','4000MHz','16GB',4,28,99.8,1,'https:
 UNLOCK TABLES;
 
 --
+-- Table structure for table `requests`
+--
+
+DROP TABLE IF EXISTS `requests`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `requests` (
+  `RequestsID` int NOT NULL AUTO_INCREMENT,
+  `UserID` int NOT NULL,
+  `Request` mediumtext,
+  PRIMARY KEY (`RequestsID`),
+  KEY `useridtje_idx` (`UserID`),
+  CONSTRAINT `useridtje` FOREIGN KEY (`UserID`) REFERENCES `user` (`UserID`)
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `requests`
+--
+
+LOCK TABLES `requests` WRITE;
+/*!40000 ALTER TABLE `requests` DISABLE KEYS */;
+/*!40000 ALTER TABLE `requests` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `type`
 --
 
@@ -387,7 +413,7 @@ CREATE TABLE `user` (
   `IsAdmin` tinyint DEFAULT NULL,
   `Salt` varchar(200) NOT NULL,
   PRIMARY KEY (`UserID`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -396,7 +422,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (18,'admin','a15a80a3d51b2d4fef427803191341bee161377dc63242b305414bdeb079b72b','Admin','AdminStreet',95914.7,1,'9²tÂ»üÅ:N\'\Z÷ÈzxÜmèc°Þ'),(19,'robbyvgaming','7a0c62479b7264d99d400181518afca60cb2d1a874a63caaf8e07c15f58b5750','Robbert Groffi','Halingenstraat 32, Velm 3806',918,0,']TzK×Y2^è¼mÄ	¦õg»Ô²ÖÔY¶'),(20,'victoria','45027579fbb86c7982ca78d43667ef3c7f0c7818410ff8abb10af20a4ea1f745','Victoria Crauwels','Neger is de poepstraat 32',NULL,0,'¸hÞñÙÄµÈ9%kø¥Ëçz&/¶Ã\0äg%N');
+INSERT INTO `user` VALUES (18,'admin','a15a80a3d51b2d4fef427803191341bee161377dc63242b305414bdeb079b72b','Admin','AdminStreet',95914.7,1,'9²tÂ»üÅ:N\'\Z÷ÈzxÜmèc°Þ'),(19,'robbyvgaming','7a0c62479b7264d99d400181518afca60cb2d1a874a63caaf8e07c15f58b5750','Robbert Groffi','Halingenstraat 32, Velm 3806',918,0,']TzK×Y2^è¼mÄ	¦õg»Ô²ÖÔY¶'),(20,'victoria','45027579fbb86c7982ca78d43667ef3c7f0c7818410ff8abb10af20a4ea1f745','Victoria Crauwels','Neger is de poepstraat 32',NULL,0,'¸hÞñÙÄµÈ9%kø¥Ëçz&/¶Ã\0äg%N'),(21,'dildo24','a1b5dbb040e235640a03d068d82fef8aa22f167eeb06637a1d88d1511cd98023','berke','dildostraat 24',NULL,0,'ûØ¢<>KùÊôa^OÎºú»4«u\r2|×gÌkÇ');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -409,4 +435,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-07 21:56:21
+-- Dump completed on 2024-05-16 15:32:51

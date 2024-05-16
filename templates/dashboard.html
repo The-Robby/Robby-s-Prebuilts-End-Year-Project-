@@ -71,6 +71,13 @@
         <a href="/review">Review Notifications</a>
     </div>
     {% endif %}
+    {% if admin and not noRequest %}
+    <div class="options-item">
+        <h2 id="title">Notifications</h2>
+        <img src="{{ url_for('static', filename='images/gpu.png') }}" alt="update item pic" width="340">
+        <a href="/review-request">Review Requests</a>
+    </div>
+    {% endif %}
     </div>
     
 </body>
