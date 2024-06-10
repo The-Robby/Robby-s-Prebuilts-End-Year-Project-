@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, j
 import storing_password as sp
 import data_functions as df
 import ast
+import os
 
 # -----------------------------------------------------------------------------------------GLOBALS--------------------------------------------------------------------------------
 app = Flask(__name__, static_folder="static") #creates a Flask application instance named app
@@ -638,3 +639,5 @@ def updateitem():
 
 if __name__ == "__main__":
     app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))  # Use PORT if set, otherwise default to 5000
+    app.run(host='0.0.0.0', port=port)
