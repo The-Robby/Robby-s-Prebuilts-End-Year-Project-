@@ -1,1 +1,1 @@
-password_sql="test"
+password_sql="Ferrari355GR"
